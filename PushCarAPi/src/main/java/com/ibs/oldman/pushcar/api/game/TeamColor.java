@@ -1,0 +1,66 @@
+package com.ibs.oldman.pushcar.api.game;
+
+/**
+ * 队伍的颜色
+ * @author yezi
+ */
+public enum TeamColor {
+    /*黑色*/
+    BLACK,
+    /*
+    蓝色
+     */
+    BLUE,
+    /*
+    绿色
+     */
+    GREEN,
+    /*
+    红色
+     */
+    RED,
+    /*
+     品红
+     */
+    MAGENTA,
+    /*
+     橙色
+     */
+    ORANGE,
+    /*
+    浅灰
+     */
+    LIGHT_GRAY,
+    /*
+    灰
+     */
+    GRAY,
+    /*
+       浅蓝
+     */
+    LIGHT_BLUE,
+    /*
+    酸橙
+     */
+    LIME,
+    /*
+    青色
+     */
+    CYAN,
+    /*
+    粉色
+     */
+    PINK,
+    /*
+    黄色
+     */
+    YELLOW,
+    /*
+    白色
+     */
+    WHITE,
+    /*
+    棕色
+     */
+    BROWN;
+}

@@ -1,0 +1,9 @@
+name: PushCar
+main: com.ibs.oldman.pushcar.Main
+version: ${project.version}
+author: Yezi
+commands:
+  pc:
+    description: Command of PC plugin
+    useage: /pc [subcommand]
+    aliases: "pushcar"

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="87f531ec-59a5-46a1-8db7-0dd47595294d" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="1dlD6Rvcv46unp6MSUlqtZkvWHD" />
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="jdk.selected.JAVA_MODULE" value="11" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.45428017" />
+    <property name="settings.editor.selected.configurable" value="Errors" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.ibs.oldman.pushcar.lib.nms.entity" />
+      <recent name="com.ibs.oldman.pushcar.lib.nms.holograms" />
+      <recent name="com.ibs.oldman.pushcar.game" />
+      <recent name="com.ibs.oldman.pushcar.utils" />
+      <recent name="com.ibs.oldman.pushcar.config" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarPlugin\src\main\java\com\ibs\oldman\pushcar" />
+      <recent name="G:\backed\Eback\study\java\demo\oldMenPushCar\PushCarPlugin\src\main\resources" />
+      <recent name="G:\backed\Eback\study\java\demo\oldMenPushCar\PushCarPlugin\src\main\java" />
+      <recent name="G:\backed\Eback\study\java\demo\oldMenPushCar\PushCarPlugin" />
+      <recent name="G:\backed\Eback\study\java\demo\oldMenPushCar\src\main\java\com\ibs\oldman\pushcar\command" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="87f531ec-59a5-46a1-8db7-0dd47595294d" name="Default Changelist" comment="" />
+      <created>1592990610380</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1592990610380</updated>
+      <workItem from="1592990613836" duration="2194000" />
+      <workItem from="1592995113663" duration="1760000" />
+      <workItem from="1593052899653" duration="3418000" />
+      <workItem from="1593073359925" duration="241000" />
+      <workItem from="1593089257114" duration="3849000" />
+      <workItem from="1593097749534" duration="827000" />
+      <workItem from="1593130456159" duration="6548000" />
+      <workItem from="1593166735638" duration="9717000" />
+      <workItem from="1593188109852" duration="829000" />
+      <workItem from="1593188958271" duration="46000" />
+      <workItem from="1593221451663" duration="1616000" />
+      <workItem from="1593226192176" duration="13488000" />
+      <workItem from="1593265662605" duration="780000" />
+      <workItem from="1593316672241" duration="3191000" />
+      <workItem from="1593343992226" duration="2200000" />
+      <workItem from="1593397267465" duration="1521000" />
+      <workItem from="1593501817171" duration="7955000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+</project>

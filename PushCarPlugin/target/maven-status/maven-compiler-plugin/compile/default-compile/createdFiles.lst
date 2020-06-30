@@ -1,0 +1,14 @@
+com\ibs\oldman\pushcar\game\Region.class
+com\ibs\oldman\pushcar\config\Configurator.class
+com\ibs\oldman\pushcar\listener\CarEvent.class
+com\ibs\oldman\pushcar\game\GameRegistry.class
+com\ibs\oldman\pushcar\game\StoredInventory.class
+com\ibs\oldman\pushcar\command\CommandHandler.class
+com\ibs\oldman\pushcar\Main.class
+com\ibs\oldman\pushcar\game\Game.class
+com\ibs\oldman\pushcar\game\TeamColor.class
+com\ibs\oldman\pushcar\command\CommandExecute.class
+com\ibs\oldman\pushcar\command\TestCommands.class
+com\ibs\oldman\pushcar\listener\PlayerEvent.class
+com\ibs\oldman\pushcar\game\Team.class
+com\ibs\oldman\pushcar\game\GamePlayer.class
