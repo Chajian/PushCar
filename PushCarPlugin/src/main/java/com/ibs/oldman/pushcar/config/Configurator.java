@@ -90,7 +90,11 @@ public class Configurator {
 //            main.saveResource(shopFileName, false);
         }
 
-        AtomicBoolean modify = new AtomicBoolean(false);
+        AtomicBoolean modify = new AtomicBoolean(true);
+
+        checkOrSetConfig(modify, "locale", "en");
+
+
 
         if (modify.get()) {
             try {

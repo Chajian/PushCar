@@ -1,18 +1,17 @@
 package com.ibs.oldman.pushcar.game;
 
-import com.ibs.oldman.pushcar.api.game.TeamColor;
 import org.bukkit.Location;
 
 /**
  * 团队信息
  */
 public class Team implements com.ibs.oldman.pushcar.api.game.Team {
-    protected com.ibs.oldman.pushcar.game.TeamColor teamColor;
-    private String name;
-    private Location bed;
-    private Location spawn;
-    private int maxplayer;
-    private Game game;
+    public TeamColor teamColor;
+    public String name;
+    public Location bed;
+    public Location spawn;
+    public int maxplayers;
+    public Game game;
 
 
     public Team clone() {
@@ -21,7 +20,7 @@ public class Team implements com.ibs.oldman.pushcar.api.game.Team {
         t.name = this.name;
         t.bed = this.bed;
         t.spawn = this.spawn;
-        t.maxplayer = this.maxplayer;
+        t.maxplayers = this.maxplayers;
         t.game = this.game;
         return t;
     }
@@ -33,7 +32,7 @@ public class Team implements com.ibs.oldman.pushcar.api.game.Team {
     }
 
     @Override
-    public TeamColor getColor() {
+    public com.ibs.oldman.pushcar.api.game.TeamColor getColor() {
         return teamColor.toApiColor();
     }
 
@@ -54,6 +53,6 @@ public class Team implements com.ibs.oldman.pushcar.api.game.Team {
 
     @Override
     public int getMaxPlayers() {
-        return maxplayer;
+        return maxplayers;
     }
 }

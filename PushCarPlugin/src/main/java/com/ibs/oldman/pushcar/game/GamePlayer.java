@@ -1,6 +1,7 @@
 package com.ibs.oldman.pushcar.game;
 
 import com.ibs.oldman.pushcar.Main;
+import com.ibs.oldman.pushcar.lib.nms.entity.PlayerUtils;
 import com.ibs.oldman.pushcar.utils.BungeeUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -47,7 +48,7 @@ public class GamePlayer  {
             this.clean();
             this.game = game;
             this.isSpectator = false;
-//            this.game.internalJoinPlayer(this);
+            this.game.internalJoinPlayer(this);
             this.latestGame = this.game.getName();
         } else if (this.game != null) {
 //            this.game.internalLeavePlayer(this);
@@ -165,7 +166,6 @@ public class GamePlayer  {
     传送
      */
     public boolean teleport(Location location) {
-//        return PlayerUtils.teleportPlayer(player, location);
-        return false;
+        return PlayerUtils.teleportPlayer(player, location);
     }
 }

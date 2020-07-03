@@ -1,7 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="87f531ec-59a5-46a1-8db7-0dd47595294d" name="Default Changelist" comment="" />
+    <list default="true" id="87f531ec-59a5-46a1-8db7-0dd47595294d" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarAPi/src/main/java/com/ibs/oldman/pushcar/api/boss/BossBar19.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarAPi/src/main/java/com/ibs/oldman/pushcar/api/util/ColorChanger.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/command/JoinCommands.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/game/GameCreator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/inventory/TeamSelectorInventory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/lib/nms/entity/PlayerUtils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/lib/nms/util/ClassMethod.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/lib/nms/util/ClassStorage.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/lib/nms/util/InstanceMethod.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/lib/nms/util/MiscUtils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/lib/nms/util/Version.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/utils/ColorChanger.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/utils/TeamJoinMetaDataValue.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/lang/BukkitTranslateContainer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/lang/I.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/lang/I18n.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/lang/I18nBukkit.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/lang/ITranslateContainer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/lang/Message.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/lang/MessageReceiver.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/lang/MessageReplacement.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/resources/language/language_en.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/resources/language/language_zh-CN.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarAPi/target/PushCarAPi-0.1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarAPi/target/PushCarAPi-0.1.0-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarAPi/target/classes/com/ibs/oldman/pushcar/api/game/RunningTeam.class" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarAPi/target/classes/com/ibs/oldman/pushcar/api/game/RunningTeam.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarAPi/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarAPi/target/maven-archiver/pom.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarAPi/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarAPi/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarAPi/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarAPi/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/dependency-reduced-pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/dependency-reduced-pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/command/TestCommands.java" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/command/TestCommands.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/config/Configurator.java" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/config/Configurator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/game/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/game/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/game/GamePlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/game/GamePlayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/game/Team.java" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar/game/Team.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/target/PushCarPlugin-1.0.jar" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/target/PushCarPlugin-1.0.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/target/classes/com/ibs/oldman/pushcar/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/target/classes/com/ibs/oldman/pushcar/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/target/classes/com/ibs/oldman/pushcar/command/TestCommands.class" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/target/classes/com/ibs/oldman/pushcar/command/TestCommands.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/target/classes/com/ibs/oldman/pushcar/config/Configurator.class" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/target/classes/com/ibs/oldman/pushcar/config/Configurator.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/target/classes/com/ibs/oldman/pushcar/game/CurrentTeam.class" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/target/classes/com/ibs/oldman/pushcar/game/CurrentTeam.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/target/classes/com/ibs/oldman/pushcar/game/Game.class" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/target/classes/com/ibs/oldman/pushcar/game/Game.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/target/classes/com/ibs/oldman/pushcar/game/GamePlayer.class" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/target/classes/com/ibs/oldman/pushcar/game/GamePlayer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/target/classes/com/ibs/oldman/pushcar/game/Team.class" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/target/classes/com/ibs/oldman/pushcar/game/Team.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/target/maven-archiver/pom.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PushCarPlugin/target/original-PushCarPlugin-1.0.jar" beforeDir="false" afterPath="$PROJECT_DIR$/PushCarPlugin/target/original-PushCarPlugin-1.0.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,6 +83,9 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="MavenImportPreferences">
     <option name="importingSettings">
       <MavenImportingSettings>
@@ -40,10 +95,11 @@
   </component>
   <component name="ProjectId" id="1dlD6Rvcv46unp6MSUlqtZkvWHD" />
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="jdk.selected.JAVA_MODULE" value="11" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/PushCarPlugin/src/main/java/com/ibs/oldman/pushcar" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/PushCarPlugin/src/main/resources/language" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
@@ -52,18 +108,18 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="com.ibs.oldman.pushcar.lib.nms.entity" />
-      <recent name="com.ibs.oldman.pushcar.lib.nms.holograms" />
-      <recent name="com.ibs.oldman.pushcar.game" />
       <recent name="com.ibs.oldman.pushcar.utils" />
-      <recent name="com.ibs.oldman.pushcar.config" />
+      <recent name="com.ibs.oldman.pushcar.game" />
+      <recent name="com.ibs.oldman.pushcar.api.util" />
+      <recent name="com.ibs.oldman.pushcar.inventory" />
+      <recent name="com.ibs.oldman.pushcar.api.boss" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarPlugin\src\main\resources\language" />
+      <recent name="F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarPlugin\src\main\java" />
       <recent name="F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarPlugin\src\main\java\com\ibs\oldman\pushcar" />
       <recent name="G:\backed\Eback\study\java\demo\oldMenPushCar\PushCarPlugin\src\main\resources" />
       <recent name="G:\backed\Eback\study\java\demo\oldMenPushCar\PushCarPlugin\src\main\java" />
-      <recent name="G:\backed\Eback\study\java\demo\oldMenPushCar\PushCarPlugin" />
-      <recent name="G:\backed\Eback\study\java\demo\oldMenPushCar\src\main\java\com\ibs\oldman\pushcar\command" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -105,10 +161,30 @@
       <workItem from="1593343992226" duration="2200000" />
       <workItem from="1593397267465" duration="1521000" />
       <workItem from="1593501817171" duration="7955000" />
+      <workItem from="1593524565381" duration="4207000" />
+      <workItem from="1593568421284" duration="3171000" />
+      <workItem from="1593602845223" duration="12058000" />
+      <workItem from="1593695118985" duration="6346000" />
+      <workItem from="1593707838045" duration="601000" />
+      <workItem from="1593738698601" duration="4717000" />
+      <workItem from="1593786891993" duration="10000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

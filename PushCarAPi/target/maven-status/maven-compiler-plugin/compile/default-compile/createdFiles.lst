@@ -2,6 +2,7 @@ com\ibs\oldman\pushcar\api\event\PushCarPlayerJoinEvent.class
 com\ibs\oldman\pushcar\api\spawner\ItemSpawnerType.class
 com\ibs\oldman\pushcar\api\game\InGameConfigBooleanConstants.class
 com\ibs\oldman\pushcar\api\game\Team.class
+com\ibs\oldman\pushcar\api\util\ColorChanger.class
 com\ibs\oldman\pushcar\api\game\Game.class
 com\ibs\oldman\pushcar\api\game\GameStatus.class
 com\ibs\oldman\pushcar\api\game\ArenaTime.class
@@ -22,4 +23,5 @@ com\ibs\oldman\pushcar\api\boss\BossBar.class
 com\ibs\oldman\pushcar\api\event\PushCarApplyPropertyToBoughtItem.class
 com\ibs\oldman\pushcar\api\game\Region.class
 com\ibs\oldman\pushcar\api\event\PushCarApplyPropertyToDisplayedItem.class
+com\ibs\oldman\pushcar\api\boss\BossBar19.class
 com\ibs\oldman\pushcar\api\game\Registry.class
