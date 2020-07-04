@@ -58,6 +58,7 @@ public class Main extends JavaPlugin implements PushCarApi {
         main = this;
         configurator = new Configurator(main);
         configurator.createFiles();
+        I18n.load(this, configurator.config.getString("locale"));//加载插件语言配置信息
         CommandHandler commandHandler = new CommandHandler()
                 .register("test",new TestCommands())
                 .register("join",new JoinCommands());
@@ -72,8 +73,6 @@ public class Main extends JavaPlugin implements PushCarApi {
         }
 
         isLegacy = versionNumber < 113;
-
-        I18n.load(this, configurator.config.getString("locale"));//加载插件语言配置信息
 
 
     }
