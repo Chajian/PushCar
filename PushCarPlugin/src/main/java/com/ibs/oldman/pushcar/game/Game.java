@@ -4,6 +4,7 @@ import com.ibs.oldman.pushcar.Main;
 import com.ibs.oldman.pushcar.api.boss.BossBar;
 import com.ibs.oldman.pushcar.api.boss.BossBar19;
 import com.ibs.oldman.pushcar.api.boss.StatusBar;
+import com.ibs.oldman.pushcar.api.event.PushCartTickEvent;
 import com.ibs.oldman.pushcar.api.game.ArenaTime;
 import com.ibs.oldman.pushcar.api.game.GameStatus;
 import com.ibs.oldman.pushcar.api.game.GameStore;
@@ -11,6 +12,8 @@ import com.ibs.oldman.pushcar.api.game.RunningTeam;
 import static lang.I.*;
 
 import com.ibs.oldman.pushcar.api.spawner.ItemSpawner;
+import com.ibs.oldman.pushcar.utils.Sounds;
+import com.ibs.oldman.pushcar.utils.Title;
 import com.onarandombox.MultiverseCore.api.Core;
 import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import com.ibs.oldman.pushcar.inventory.TeamSelectorInventory;
@@ -24,6 +27,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -32,13 +36,11 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Game implements com.ibs.oldman.pushcar.api.game.Game {
     /*团队信息Map*/
@@ -51,7 +53,7 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
     private List<CurrentTeam> currentTeams = new ArrayList<>();
     /*游戏名称*/
     private String game_name;
-    private GameStatus gameStatus,afterRebuild,previousStatus=GameStatus.DISABLED;
+    private GameStatus gameStatus = GameStatus.DISABLED,afterRebuild = GameStatus.WAITING,previousStatus=GameStatus.DISABLED,nextStatus;
 //    private GameStatus previousStatus = GameStatus.DISABLED;//之前状态
     /*竞技场对角线位置*/
     private Location point1,point2;
@@ -63,6 +65,8 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
     private int pauseCountdown = -1;
     /*倒计时*/
     private int countdown = -1;
+    /*下一个倒计时*/
+    private int nextCountdown = -1;
     /*倒计时之前*/
     private int previousCountdown = -1;
     /*团队选择窗口*/
@@ -70,6 +74,7 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
     private static Main main = null;
     private int gameTime;
     private int minPlayers;
+    private Scoreboard gameScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
     private int maxplayers;
     private Region region = new Region();
     private World world;
@@ -80,9 +85,15 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
     private BarColor lobby_color;
     /*竞技场提示栏颜色*/
     private BarColor game_color;
-
+    /*末地箱子*/
+    private Map<GamePlayer, Inventory> fakeEnderChests = new HashMap<>();
     /*处理run（）的任务*/
     private BukkitTask task;
+    /*通知游戏等待*/
+    public static final int POST_GAME_WAITING = 3;
+    public boolean gameStartItem;
+    /*刚刚开始,用于判断是否初始化玩家位置和矿车*/
+    public boolean just_start = true;
 
     @Override
     public String getName() {
@@ -133,6 +144,14 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
         }
     }
 
+    public Region getRegion() {
+        return region;
+    }
+
+    public void setRegion(Region region) {
+        this.region = region;
+    }
+
     /*玩家请求加入游戏*/
     @Override
     public void joinToGame(Player player) {
@@ -150,6 +169,23 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
         gamePlayer.changeGame(null);
         updateScorebroad();
     }
+
+    public CurrentTeam getTeamOfChest(Block block) {
+        for (CurrentTeam team : currentTeams) {
+            if (team.isTeamChestRegistered(block)) {
+                return team;
+            }
+        }
+        return null;
+    }
+
+    public Inventory getFakeEnderChest(GamePlayer player) {
+        if (!fakeEnderChests.containsKey(player)) {
+            fakeEnderChests.put(player, Bukkit.createInventory(player.player, InventoryType.ENDER_CHEST));
+        }
+        return fakeEnderChests.get(player);
+    }
+
 
     @Override
     public void selectPlayerTeam(Player player, com.ibs.oldman.pushcar.api.game.Team team) {
@@ -405,6 +441,10 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
         return arenaTime;
     }
 
+    public static Game loadGame(File file) {
+        return loadGame(file, true);
+    }
+
     /**
      * 初始化竞技场
      * @param file 竞技场文件
@@ -431,7 +471,7 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
         String worldName = configMap.getString("world");
         game.world = Bukkit.getWorld(worldName);
         //加载世界
-        if(game.world!=null){
+        if(game.world==null){
             if (Bukkit.getPluginManager().isPluginEnabled("Multiverse-Core")) {
                 Bukkit.getConsoleSender().sendMessage("§c[B§fW] §cWorld " + worldName
                         + " was not found, but we found Multiverse-Core, so we will try to load this world.");
@@ -511,6 +551,7 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
                 t.teamColor = TeamColor.valueOf(MiscUtils.convertColorToNewFormat(team.getString("color"), t));
                 t.name = teamN;
                 t.bed = MiscUtils.readLocationFromString(game.world, team.getString("bed"));
+                t.targetbed = MiscUtils.readLocationFromString(game.world,team.getString("targetbed"));
                 t.maxplayers = team.getInt("maxPlayers");
                 t.spawn = MiscUtils.readLocationFromString(game.world, team.getString("spawn"));
                 t.game = game;
@@ -573,9 +614,10 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
             return;
         }
 
+        //删除玩家,次方法为了防止java.util.ConcurrentModificationException异常
         players.remove(gamePlayer);
 
-        statusbar.removePlayer(gamePlayer.player);
+//        statusbar.removePlayer(gamePlayer.player);
 
         //传送到主大厅
         gamePlayer.player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
@@ -783,7 +825,6 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
 
     /*玩家加入游戏*/
     public void internalJoinPlayer(GamePlayer gamePlayer){
-        if(!gamePlayer.player.isEmpty()){
             if(!players.contains(gamePlayer)){
                 players.add(gamePlayer);
             }
@@ -793,68 +834,77 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
                 gamePlayer.player.setPlayerTime(arenaTime.time, false);
             }
 
-            //设置玩家快捷键按钮
-            final BukkitRunnable joinTask = new BukkitRunnable() {
-                @Override
-                public void run() {
+            if (gameStatus == GameStatus.WAITING) {
+                    //设置玩家快捷键按钮
+                    final BukkitRunnable joinTask = new BukkitRunnable() {
+                        @Override
+                        public void run() {
 
-                    if (true) {
-                        int compassPosition = Main.getConfigurator().config.getInt("hotbar.selector", 0);
-                        if (compassPosition >= 0 && compassPosition <= 8) {
-                            ItemStack compass = Main.getConfigurator().readDefinedItem("jointeam", "COMPASS");
-                            ItemMeta metaCompass = compass.getItemMeta();
-                            metaCompass.setDisplayName(i18n("compass_selector_team", false));
-                            compass.setItemMeta(metaCompass);
-                            gamePlayer.player.getInventory().setItem(compassPosition, compass);
+    //                    if (true) {
+                            int compassPosition = Main.getConfigurator().config.getInt("hotbar.selector", 0);
+                            if (compassPosition >= 0 && compassPosition <= 8) {
+                                ItemStack compass = Main.getConfigurator().readDefinedItem("jointeam", "COMPASS");
+                                ItemMeta metaCompass = compass.getItemMeta();
+                                metaCompass.setDisplayName(i18n("compass_selector_team", false));
+                                compass.setItemMeta(metaCompass);
+                                gamePlayer.player.getInventory().setItem(compassPosition, compass);
+                            }
+    //                    }
+
+                            //离开物品
+                            int leavePosition = Main.getConfigurator().config.getInt("hotbar.leave", 8);
+                            if (leavePosition >= 0 && leavePosition <= 8) {
+                                ItemStack leave = Main.getConfigurator().readDefinedItem("leavegame", "SLIME_BALL");
+                                ItemMeta leaveMeta = leave.getItemMeta();
+                                leaveMeta.setDisplayName(i18n("leave_from_game_item", false));
+                                leave.setItemMeta(leaveMeta);
+                                gamePlayer.player.getInventory().setItem(leavePosition, leave);
+                            }
+
+                        //vip通道
+                        if (gamePlayer.player.hasPermission("bw.vip.startitem")
+                                || gamePlayer.player.hasPermission("misat11.bw.vip.startitem")) {
+                            int vipPosition = Main.getConfigurator().config.getInt("hotbar.start", 1);
+                            if (vipPosition >= 0 && vipPosition <= 8) {
+                                ItemStack startGame = Main.getConfigurator().readDefinedItem("startgame", "DIAMOND");
+                                ItemMeta startGameMeta = startGame.getItemMeta();
+                                startGameMeta.setDisplayName(i18n("start_game_item", false));
+                                startGame.setItemMeta(startGameMeta);
+
+                                gamePlayer.player.getInventory().setItem(vipPosition, startGame);
+                            }
                         }
+
                     }
+                };
 
-                    //离开物品
-                    int leavePosition = Main.getConfigurator().config.getInt("hotbar.leave", 8);
-                    if (leavePosition >= 0 && leavePosition <= 8) {
-                        ItemStack leave = Main.getConfigurator().readDefinedItem("leavegame", "SLIME_BALL");
-                        ItemMeta leaveMeta = leave.getItemMeta();
-                        leaveMeta.setDisplayName(i18n("leave_from_game_item", false));
-                        leave.setItemMeta(leaveMeta);
-                        gamePlayer.player.getInventory().setItem(leavePosition, leave);
-                    }
 
-                    //vip通道
-                    if (gamePlayer.player.hasPermission("bw.vip.startitem")
-                            || gamePlayer.player.hasPermission("misat11.bw.vip.startitem")) {
-                        int vipPosition = Main.getConfigurator().config.getInt("hotbar.start", 1);
-                        if (vipPosition >= 0 && vipPosition <= 8) {
-                            ItemStack startGame = Main.getConfigurator().readDefinedItem("startgame", "DIAMOND");
-                            ItemMeta startGameMeta = startGame.getItemMeta();
-                            startGameMeta.setDisplayName(i18n("start_game_item", false));
-                            startGame.setItemMeta(startGameMeta);
-
-                            gamePlayer.player.getInventory().setItem(vipPosition, startGame);
-                        }
-                    }
-
+                //将玩家传送到大厅，并且基于快捷键
+                if (gamePlayer.teleport(lobbySpawn)) {
+                    joinTask.runTaskLater(Main.getMain(), 1L);
+                } else {
+                    joinTask.runTaskLater(Main.getMain(), 10L);
                 }
-            };
-
-            //将玩家传送到大厅，并且基于快捷键
-            if (gamePlayer.teleport(lobbySpawn)) {
-                joinTask.runTaskLater(Main.getMain(), 1L);
-            } else {
-                joinTask.runTaskLater(Main.getMain(), 10L);
-            }
-
             if (gamePlayer.player.isEmpty()) {
                 runTask();
             } else {
                 statusbar.addPlayer(gamePlayer.player);
             }
 
-        }
+            }
     }
 
     /*随机加入团队*/
     public void joinRandomTeam(){
 
+    }
+
+    public boolean checkMinPlayers() {
+        return players.size() >= getMinPlayers();
+    }
+
+    public TeamSelectorInventory getTeamSelectorInventory() {
+        return teamSelectorInventory;
     }
 
     public void runTask() {
@@ -883,6 +933,7 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
         }
     }
 
+    /*游戏运行逻辑*/
     public void run(){
 //步骤1:检查这个游戏是否运行
         if (gameStatus == GameStatus.DISABLED) { // Game is not running, why cycle is still running? 游戏不运行，为什么循环仍然运行
@@ -895,27 +946,161 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
             previousCountdown = countdown = pauseCountdown;
             previousStatus = GameStatus.WAITING;
             String title = i18nonly("bossbar_waiting");//设置标题为等待
-            statusbar.setProgress(0);
-            statusbar.setVisible(true);
-            for (GamePlayer p : players) {
-                statusbar.addPlayer(p.player);
-            }
-//            if (statusbar instanceof BossBar) {
-//                BossBar bossbar = (BossBar) statusbar;
-//                bossbar.setMessage(title);
-//                if (bossbar instanceof BossBar19) {
-//                    BossBar19 bossbar19 = (BossBar19) bossbar;
-//                    bossbar19.setColor(lobbyBossBarColor != null ? lobbyBossBarColor
-//                            : BarColor.valueOf(Main.getConfigurator().config.getString("bossbar.lobby.color")));//设置颜色
-//                    bossbar19
-//                            .setStyle(BarStyle.valueOf(Main.getConfigurator().config.getString("bossbar.lobby.style")));//设置标题样式
-//                }
-//            }
             if (teamSelectorInventory == null) {
                 teamSelectorInventory = new TeamSelectorInventory(Main.getMain(), this);
             }
-//            updateSigns();
         }
+        nextCountdown = countdown;
+        nextStatus = gameStatus;
+
+        //如果游戏在等阶段
+        if(gameStatus == GameStatus.WAITING) {
+            //是否有游戏开始物品
+            if (gameStartItem) {
+                if (players.size() >= getMinPlayers()) {//玩家数量大于最低玩家数量
+                    //剩余的玩家随机加入团队
+                    for (GamePlayer gamePlayer : players)
+                        if (getPlayerTeam(gamePlayer) == null)
+                            joinRandomTeam(gamePlayer);
+                }
+                //玩家数量大于1,设置倒计时为0，并且游戏开始物品取消
+                if(players.size() >1){
+                    countdown = 0;
+                    gameStartItem = false;
+                }
+            }
+            //玩家数量大于最低玩家数量并且团队数量大于1
+            if(players.size() >= getMinPlayers() && teams.values().size()>1){
+                //倒计时为0设置下一个倒计时为游戏时间，下一个游戏状态为运行状态
+                if (countdown == 0) {
+                    nextCountdown = gameTime;
+                    nextStatus = GameStatus.RUNNING;
+
+
+                    //将所有玩家传送到出生点，并且生成矿车
+                    for (CurrentTeam currentTeam : currentTeams) {
+                        currentTeam.teleportPlayersToSpawn();
+                        currentTeam.getInstanceCart();
+                    }
+                }
+                else {//否则下一个倒计时递减，
+                    nextCountdown--;
+                    //倒计时在1-10之间，并且倒计时不等于前倒计时,递归玩家发送字幕并且播放声音
+                    if (countdown <= 10 && countdown >= 1 && countdown != previousCountdown) {
+                        for (GamePlayer player : players) {
+                            Title.send(player.player, ChatColor.YELLOW + Integer.toString(countdown), "");
+                            Sounds.playSound(player.player, player.player.getLocation(),
+                                    Main.getConfigurator().config.getString("sounds.on_countdown"), Sounds.UI_BUTTON_CLICK,
+                                    1, 1);
+                        }
+                    }
+                }
+            }
+            else{//否则下一个倒计时等于倒计时等于暂停时间
+                nextCountdown = countdown = pauseCountdown;
+            }
+        }
+        else if(gameStatus == GameStatus.RUNNING){//游戏运行中
+
+            if(countdown== 0){//如果游戏时间还没到
+                nextCountdown = POST_GAME_WAITING;
+                nextStatus = GameStatus.GAME_END_CELEBRATING;
+
+                //通过积分进行比赛获胜判决
+            }
+            else{
+                nextCountdown--;
+            }
+        }
+        else if(gameStatus == GameStatus.GAME_END_CELEBRATING){
+            if(countdown == 0){
+                nextStatus = GameStatus.REBUILDING;
+                nextCountdown = 0;
+
+                //踢出所有玩家,这样做的目的是为了防止报错
+//                for (GamePlayer player : (List<GamePlayer>) ((ArrayList<GamePlayer>) players).clone()) {
+//                    player.changeGame(null);
+//
+                for(GamePlayer gamePlayer:(List<GamePlayer>)((ArrayList<GamePlayer>)players).clone()){
+                    gamePlayer.changeGame(null);
+                }
+            }
+            else{
+                nextCountdown--;
+            }
+        }
+        //加载滴答事件
+        PushCartTickEvent tickEvent = new PushCartTickEvent(this,previousCountdown,previousStatus,countdown,gameStatus,nextCountdown,nextStatus);
+        Bukkit.getPluginManager().callEvent(tickEvent);
+        // Phase 5: Update Previous information
+        // 步骤 5: 更新之前的信息
+        previousCountdown = countdown;
+        previousStatus = gameStatus;
+
+        //处理滴答事件
+        if(gameStatus != tickEvent.getNextStatus()){
+
+            //如果一个状态是运行
+//            if(tickEvent.getNextStatus() == GameStatus.RUNNING){
+//
+//                if(teamSelectorInventory != null)
+//                    teamSelectorInventory.destroy();
+//                teamSelectorInventory = null;
+//
+//                for(GamePlayer player:this.players){
+//                    CurrentTeam team = getPlayerTeam(player);
+//                    player.player.getInventory().clear();
+//                    // Player still had armor on legacy versions
+//                    player.player.getInventory().setHelmet(null);
+//                    player.player.getInventory().setChestplate(null);
+//                    player.player.getInventory().setLeggings(null);
+//                    player.player.getInventory().setBoots(null);
+//
+//                    Sounds.playSound(player.player, player.player.getLocation(),
+//                            Main.getConfigurator().config.getString("sounds.on_game_start"),
+//                            Sounds.ENTITY_PLAYER_LEVELUP, 1, 1);
+//                }
+//
+//            }
+
+
+        }
+
+        //如果游戏处于运行状态，判断是否有队伍获胜
+        if(gameStatus == GameStatus.RUNNING && tickEvent.getNextStatus() == GameStatus.RUNNING){
+            CurrentTeam winner = null;
+            for(CurrentTeam currentTeam:currentTeams){
+                //是否有队伍获胜
+                if(currentTeam.isArrived()){
+                    winner = currentTeam;
+                }
+            }
+            //游戏结束的奖励惩罚措施
+            if(winner != null){
+                //庆祝
+                for(GamePlayer gamePlayer:winner.players){
+                    Title.send(gamePlayer.player,"你赢啦","聪明鬼你赢啦!");
+                    gamePlayer.player.sendMessage("你赢啦!");
+                }
+                //失败者退出游戏
+                Iterator iterator = players.iterator();
+                while(iterator.hasNext()){
+                    GamePlayer gamePlayer = (GamePlayer) iterator.next();
+                    if(!isPlayerInTeam(gamePlayer.player,winner)) {
+                        gamePlayer.changeGame(null);
+                        break;
+                    }
+                }
+                tickEvent.setNextStatus(GameStatus.GAME_END_CELEBRATING);
+                tickEvent.setNextCountdown(POST_GAME_WAITING);
+            }
+        }
+        countdown = tickEvent.getNextCountdown();
+        gameStatus = tickEvent.getNextStatus();
+        System.out.println("游戏状态"+gameStatus.toString()+"之后的状态"+nextStatus.toString());
+        if(gameStatus == GameStatus.REBUILDING)
+            rebuild();
+
     }
 
     public void selectTeam(GamePlayer playerGameProfile, String displayName) {
@@ -1007,21 +1192,21 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
 //        }
 
         //设置团队记分板
-//        if (current == null) {
-//            current = new CurrentTeam(teamForJoin, this);
-//            org.bukkit.scoreboard.Team scoreboardTeam = gameScoreboard.getTeam(teamForJoin.name);
-//            if (scoreboardTeam == null) {
-//                scoreboardTeam = gameScoreboard.registerNewTeam(teamForJoin.name);
-//            }
-//            if (!Main.isLegacy()) {
-//                scoreboardTeam.setColor(teamForJoin.color.chatColor);
-//            } else {
-//                scoreboardTeam.setPrefix(teamForJoin.color.chatColor.toString());
-//            }
-//            scoreboardTeam.setAllowFriendlyFire(getOriginalOrInheritedFriendlyfire());
-//
-//            current.setScoreboardTeam(scoreboardTeam);
-//        }
+        if (current == null) {
+            current = new CurrentTeam(teamForJoin, this);
+            org.bukkit.scoreboard.Team scoreboardTeam = gameScoreboard.getTeam(teamForJoin.name);
+            if (scoreboardTeam == null) {
+                scoreboardTeam = gameScoreboard.registerNewTeam(teamForJoin.name);
+            }
+            if (!Main.isLegacy()) {
+                scoreboardTeam.setColor(teamForJoin.teamColor.chatColor);
+            } else {
+                scoreboardTeam.setPrefix(teamForJoin.teamColor.chatColor.toString());
+            }
+            scoreboardTeam.setAllowFriendlyFire(true);
+
+            current.setScoreboardTeam(scoreboardTeam);
+        }
         //处理消息
         if (cur == current) {
             player.player.sendMessage(
@@ -1084,6 +1269,130 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
         //将玩家加入列表
         if (!currentTeams.contains(current)) {
             currentTeams.add(current);
+        }
+    }
+
+    /**
+     * 判断矿车是否属于竞技场
+     * @param entity 实体
+     * @return
+     */
+    public boolean isCartInTeam(Entity entity){
+        for(CurrentTeam currentTeam:currentTeams)
+            if(currentTeam.isCartInTeam(entity))
+                return true;
+        return false;
+    }
+
+    public void saveToConfig() {
+        File dir = new File(Main.getMain().getDataFolder(), "arenas");
+        if (!dir.exists())
+            dir.mkdirs();
+        File file = new File(dir, game_name + ".yml");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        FileConfiguration configMap = new YamlConfiguration();
+        configMap.set("name", game_name);
+        configMap.set("pauseCountdown", pauseCountdown);
+        configMap.set("gameTime", gameTime);
+        configMap.set("world", world.getName());
+        configMap.set("pos1", MiscUtils.setLocationToString(point1));
+        configMap.set("pos2", MiscUtils.setLocationToString(point2));
+        configMap.set("specSpawn", MiscUtils.setLocationToString(spectator));
+        configMap.set("lobbySpawn", MiscUtils.setLocationToString(lobbySpawn));
+        configMap.set("lobbySpawnWorld", lobbySpawn.getWorld().getName());
+        configMap.set("minPlayers", minPlayers);
+        if (!teams.isEmpty()) {
+            for (Team t : teams.values()) {
+                configMap.set("teams." + t.name + ".isNewColor", t.isNewColor());
+                configMap.set("teams." + t.name + ".color", t.teamColor.name());
+                configMap.set("teams." + t.name + ".maxPlayers", t.maxplayers);
+                configMap.set("teams." + t.name + ".bed", MiscUtils.setLocationToString(t.bed));
+                configMap.set("teams." + t.name + ".spawn", MiscUtils.setLocationToString(t.spawn));
+                configMap.set("teams."+t.name+".targetbed",MiscUtils.setLocationToString(t.targetbed));
+            }
+        }
+        List<Map<String, Object>> nS = new ArrayList<>();
+//        for (ItemSpawner spawner : spawners) {
+//            Map<String, Object> spawnerMap = new HashMap<>();
+//            spawnerMap.put("location", MiscUtils.setLocationToString(spawner.loc));
+//            spawnerMap.put("type", spawner.type.getConfigKey());
+//            spawnerMap.put("customName", spawner.customName);
+//            spawnerMap.put("startLevel", spawner.startLevel);
+//            spawnerMap.put("hologramEnabled", spawner.hologramEnabled);
+//            if (spawner.getTeam() != null) {
+//                spawnerMap.put("team", spawner.getTeam().getName());
+//            } else {
+//                spawnerMap.put("team", null);
+//            }
+//            spawnerMap.put("maxSpawnedResources", spawner.maxSpawnedResources);
+//            nS.add(spawnerMap);
+//        }
+//        configMap.set("spawners", nS);
+//        if (!gameStore.isEmpty()) {
+//            List<Map<String, String>> nL = new ArrayList<>();
+//            for (GameStore store : gameStore) {
+//                Map<String, String> map = new HashMap<>();
+//                map.put("loc", MiscUtils.setLocationToString(store.getStoreLocation()));
+//                map.put("shop", store.getShopFile());
+//                map.put("parent", store.getUseParent() ? "true" : "false");
+//                map.put("type", store.getEntityType().name());
+//                if (store.isShopCustomName()) {
+//                    map.put("name", store.getShopCustomName());
+//                }
+//                nL.add(map);
+//            }
+//            configMap.set("stores", nL);
+//        }
+
+
+//        configMap.set("constant." + COMPASS_ENABLED, writeBooleanConstant(compassEnabled));
+//        configMap.set("constant." + ADD_WOOL_TO_INVENTORY_ON_JOIN, writeBooleanConstant(addWoolToInventoryOnJoin));
+//        configMap.set("constant." + COLORED_LEATHER_BY_TEAM_IN_LOBBY,
+//                writeBooleanConstant(coloredLeatherByTeamInLobby));
+//        configMap.set("constant." + CRAFTING, writeBooleanConstant(crafting));
+//        configMap.set("constant." + JOIN_RANDOM_TEAM_AFTER_LOBBY, writeBooleanConstant(joinRandomTeamAfterLobby));
+//        configMap.set("constant." + JOIN_RANDOM_TEAM_ON_JOIN, writeBooleanConstant(joinRandomTeamOnJoin));
+//        configMap.set("constant." + KEEP_INVENTORY, writeBooleanConstant(keepInventory));
+//        configMap.set("constant." + PREVENT_KILLING_VILLAGERS, writeBooleanConstant(preventKillingVillagers));
+//        configMap.set("constant." + PLAYER_DROPS, writeBooleanConstant(playerDrops));
+//        configMap.set("constant." + FRIENDLY_FIRE, writeBooleanConstant(friendlyfire));
+//        configMap.set("constant." + LOBBY_BOSSBAR, writeBooleanConstant(lobbybossbar));
+//        configMap.set("constant." + GAME_BOSSBAR, writeBooleanConstant(gamebossbar));
+//        configMap.set("constant." + LOBBY_SCOREBOARD, writeBooleanConstant(lobbyscoreboard));
+//        configMap.set("constant." + SCOREBOARD, writeBooleanConstant(ascoreboard));
+//        configMap.set("constant." + PREVENT_SPAWNING_MOBS, writeBooleanConstant(preventSpawningMobs));
+//        configMap.set("constant." + SPAWNER_HOLOGRAMS, writeBooleanConstant(spawnerHolograms));
+//        configMap.set("constant." + SPAWNER_DISABLE_MERGE, writeBooleanConstant(spawnerDisableMerge));
+//        configMap.set("constant." + GAME_START_ITEMS, writeBooleanConstant(gameStartItems));
+//        configMap.set("constant." + PLAYER_RESPAWN_ITEMS, writeBooleanConstant(playerRespawnItems));
+//        configMap.set("constant." + SPAWNER_HOLOGRAMS_COUNTDOWN, writeBooleanConstant(spawnerHologramsCountdown));
+//        configMap.set("constant." + DAMAGE_WHEN_PLAYER_IS_NOT_IN_ARENA,
+//                writeBooleanConstant(damageWhenPlayerIsNotInArena));
+//        configMap.set("constant." + REMOVE_UNUSED_TARGET_BLOCKS, writeBooleanConstant(removeUnusedTargetBlocks));
+//        configMap.set("constant." + ALLOW_BLOCK_FALLING, writeBooleanConstant(allowBlockFalling));
+//        configMap.set("constant." + HOLO_ABOVE_BED, writeBooleanConstant(holoAboveBed));
+//        configMap.set("constant." + SPECTATOR_JOIN, writeBooleanConstant(spectatorJoin));
+
+        configMap.set("arenaTime", arenaTime.name());
+//        configMap.set("arenaWeather", arenaWeather == null ? "default" : arenaWeather.name());
+//
+//        try {
+//            configMap.set("lobbyBossBarColor", lobbyBossBarColor == null ? "default" : lobbyBossBarColor.name());
+//            configMap.set("gameBossBarColor", gameBossBarColor == null ? "default" : gameBossBarColor.name());
+//        } catch (Throwable t) {
+//            // We're using 1.8
+//        }
+
+        try {
+            configMap.save(file);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

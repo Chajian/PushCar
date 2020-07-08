@@ -76,6 +76,7 @@ public class TeamSelectorInventory implements Listener {
         FormatBuilder builder = new FormatBuilder();
         
         ItemStack stack = Main.getConfigurator().readDefinedItem("team-select", Main.isLegacy() ? "WOOL" : "WHITE_WOOL");
+//        ItemStack stack = Main.getConfigurator().readDefinedItem("team-select",  "WHITE_WOOL");
         
         for (Team team : game.getTeams().values()) {
             ItemStack teamStack = Main.applyColor(team.teamColor, stack, true);
@@ -140,12 +141,12 @@ public class TeamSelectorInventory implements Listener {
         if (event.getFormat() != simpleGuiFormat) {
             return;
         }
-
         Player player = event.getPlayer();
         MapReader reader = event.getItem().getReader();
         if (reader.containsKey("team")) {
             Team team = (Team) reader.get("team");
             game.selectTeam(Main.getPlayerGameProfile(player), team.getName());
+
             player.closeInventory();
 
             repaint();

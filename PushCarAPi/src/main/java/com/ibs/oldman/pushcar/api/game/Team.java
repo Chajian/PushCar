@@ -34,9 +34,15 @@ public interface Team {
     Location getTeamSpawn();
 
     /**
-     * @return 获得bed位置
+     * @return 获得矿车出生地位置
      */
     Location getTargetBlock();
+
+    /**
+     *
+     * @return 获得矿车目的地
+     */
+    Location getTargetBed();
 
     /**
      * @return 获得最大人数

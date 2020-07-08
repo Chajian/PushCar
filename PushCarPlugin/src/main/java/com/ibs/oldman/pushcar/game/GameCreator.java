@@ -168,7 +168,7 @@ public class GameCreator {
 //                }
 //            }
 //        }
-        else if (action.equalsIgnoreCase("store")) {
+        if (action.equalsIgnoreCase("store")) {
             if (args.length >= 1) {
                 if (args[0].equalsIgnoreCase("add")) {
                     if (args.length >= 2) {
@@ -236,11 +236,11 @@ public class GameCreator {
 //                } else if (game.getSpawners().isEmpty()) {
 //                    response = I.i18n("admin_command_set_spawners_before_save");
 //                } else {
-//                    game.saveToConfig();
-//                    game.start();
-//                    Main.addGame(game);
-//                    response = I.i18n("admin_command_game_saved_and_started");
-//                    isArenaSaved = true;
+                    game.saveToConfig();
+                    game.start();
+                    Main.addGame(game);
+                    response = I.i18n("admin_command_game_saved_and_started");
+                    isArenaSaved = true;
 //                }
 //            }
         }
@@ -643,7 +643,7 @@ public class GameCreator {
         team.teamColor = c;
         team.maxplayers = maxPlayers;
         team.game = game;
-        game.getTeams().values().add(team);
+        game.getTeams().put(name,team);
 
         return I.i18n("admin_command_team_created").replace("%team%", team.name)
                 .replace("%teamcolor%", team.teamColor.chatColor + team.teamColor.name())

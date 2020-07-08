@@ -8,7 +8,8 @@ import org.bukkit.Location;
 public class Team implements com.ibs.oldman.pushcar.api.game.Team {
     public TeamColor teamColor;
     public String name;
-    public Location bed;
+    public Location bed;//矿车出生位置
+    public Location targetbed;//矿车目的地
     public Location spawn;
     public int maxplayers;
     public Game game;
@@ -54,5 +55,10 @@ public class Team implements com.ibs.oldman.pushcar.api.game.Team {
     @Override
     public int getMaxPlayers() {
         return maxplayers;
+    }
+
+    @Override
+    public Location getTargetBed() {
+        return targetbed;
     }
 }

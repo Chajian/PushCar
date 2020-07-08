@@ -2,13 +2,14 @@ package com.ibs.oldman.pushcar;
 
 import com.ibs.oldman.pushcar.api.PushCarApi;
 import com.ibs.oldman.pushcar.api.game.GameStatus;
-import com.ibs.oldman.pushcar.command.JoinCommands;
+import com.ibs.oldman.pushcar.command.*;
 import com.ibs.oldman.pushcar.game.TeamColor;
-import com.ibs.oldman.pushcar.command.CommandHandler;
-import com.ibs.oldman.pushcar.command.TestCommands;
 import com.ibs.oldman.pushcar.config.Configurator;
 import com.ibs.oldman.pushcar.game.Game;
 import com.ibs.oldman.pushcar.game.GamePlayer;
+import com.ibs.oldman.pushcar.listener.CarEvent;
+import com.ibs.oldman.pushcar.listener.PlayerEvent;
+import com.ibs.oldman.pushcar.listener.WorldEvent;
 import com.ibs.oldman.pushcar.utils.ColorChanger;
 import lang.I18n;
 import org.bukkit.Bukkit;
@@ -16,8 +17,16 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.screamingsandals.simpleinventories.listeners.InventoryListener;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main extends JavaPlugin implements PushCarApi {
     private static Main main;
@@ -32,6 +41,7 @@ public class Main extends JavaPlugin implements PushCarApi {
     private ColorChanger colorChanger;//换色器
     private static boolean isSpigot = false;
     int versionNumber = 0;
+    String version;
     public static List<String> autoColoredMaterials = new ArrayList<>();//自动着色颜料
 
     static {
@@ -57,12 +67,20 @@ public class Main extends JavaPlugin implements PushCarApi {
         Bukkit.getServer().getLogger().info("加载老汉推车插件");
         main = this;
         configurator = new Configurator(main);
+        colorChanger = new ColorChanger();
         configurator.createFiles();
         I18n.load(this, configurator.config.getString("locale"));//加载插件语言配置信息
         CommandHandler commandHandler = new CommandHandler()
-                .register("test",new TestCommands())
+                .register("admin",new AdminCommands())
+                .register("leave",new LeaveCommands())
+                .register("help",new HelpCommands())
                 .register("join",new JoinCommands());
         Bukkit.getServer().getPluginCommand("pushcar").setExecutor(commandHandler);
+
+        Bukkit.getServer().getPluginManager().registerEvents(new PlayerEvent(),this);
+        Bukkit.getServer().getPluginManager().registerEvents(new CarEvent(),this);
+        Bukkit.getServer().getPluginManager().registerEvents(new WorldEvent(),this);
+        InventoryListener.init(this);
 
         //检测版本号
         String[] bukkitVersion = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
@@ -71,12 +89,38 @@ public class Main extends JavaPlugin implements PushCarApi {
         for (int i = 0; i < 2; i++) {
             versionNumber += Integer.parseInt(bukkitVersion[i]) * (i == 0 ? 100 : 1);
         }
-
         isLegacy = versionNumber < 113;
 
+        System.out.println("版本号"+versionNumber+": "+isLegacy);
+        //初始化竞技场
+        final File arenasFolder = new File(getDataFolder(), "arenas");//竞技场文件
+        if (arenasFolder.exists()) {
+            try (Stream<Path> stream = Files.walk(Paths.get(arenasFolder.getAbsolutePath()))) {
+                final List<String> results = stream.filter(Files::isRegularFile)
+                        .map(Path::toString)
+                        .collect(Collectors.toList());
+
+                if (results.isEmpty()) {
+//                    Debug.info("No arenas have been found!", true);
+                } else {
+                    for (String result : results) {
+                        File file = new File(result);
+                        if (file.exists() && file.isFile()) {
+                            Game.loadGame(file);
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace(); // maybe remove after testing
+            }
+        }
 
     }
 
+    /**
+     * 最高人数的比赛
+     * @return
+     */
     public com.ibs.oldman.pushcar.api.game.Game getGameWithHighestPlayers() {
         TreeMap<Integer, com.ibs.oldman.pushcar.api.game.Game> gameList = new TreeMap<>();
         for (com.ibs.oldman.pushcar.api.game.Game game : getGames().values()) {
@@ -128,6 +172,22 @@ public class Main extends JavaPlugin implements PushCarApi {
         return gPlayer;
     }
 
+    /**
+     * 获取玩家所在的游戏对象
+     * @param player 玩家
+     * @return 如果玩家在任何游戏竞技场内就返回所在游戏对象。否则返回null
+     */
+    public Game getPlayerGame(Player player){
+        if(main.isPlayerInGame(player)){
+            for(Game game:games.values()){
+                if(game.isPlayerInAnyTeam(player))
+                    return game;
+            }
+        }
+        return null;
+    }
+
+
     public static boolean isDisabling() {
         return isDisabling;
     }
@@ -138,6 +198,10 @@ public class Main extends JavaPlugin implements PushCarApi {
 
     public static void unregisterGameEntity(Entity entity) {
         main.entitiesInGame.remove(entity);
+    }
+
+    public static void registerGameEntity(Entity entity, Game game) {
+        main.entitiesInGame.put(entity, game);
     }
 
     public HashMap<Player, GamePlayer> getPlayersInGame() {
@@ -152,6 +216,13 @@ public class Main extends JavaPlugin implements PushCarApi {
             }
         }
         return entityList;
+    }
+    public static List<String> getGameNames() {
+        List<String> list = new ArrayList<>();
+        for (Game game : main.games.values()) {
+            list.add(game.getName());
+        }
+        return list;
     }
 
     public static ItemStack applyColor(TeamColor color, ItemStack itemStack) {
@@ -176,6 +247,14 @@ public class Main extends JavaPlugin implements PushCarApi {
         return false;
     }
 
+    //判断矿车是否在游戏中
+    public static boolean isCartInGame(Entity entity){
+        for(Game game : main.games.values())
+            if(game.isCartInTeam(entity))
+                return true;
+        return false;
+    }
+
     public static void addGame(Game game) {
         main.games.put(game.getName(), game);
     }
@@ -187,5 +266,9 @@ public class Main extends JavaPlugin implements PushCarApi {
 
     public static int getVersionNumber() {
         return main.versionNumber;
+    }
+
+    public static String getVersion() {
+        return main.version;
     }
 }

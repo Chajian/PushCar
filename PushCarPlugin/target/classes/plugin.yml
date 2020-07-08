@@ -1,6 +1,7 @@
 name: PushCar
 main: com.ibs.oldman.pushcar.Main
 version: 1.0
+api-version: 1.13
 author: Yezi
 commands:
   pc:

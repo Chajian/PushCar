@@ -32,9 +32,9 @@ public class GamePlayer  {
     /*
     修改参与的游戏
      */
-    public void changeGame(Game game) {
+    public synchronized void changeGame(Game game) {
         if (this.game != null && game == null) {
-//            this.game.internalLeavePlayer(this);
+            this.game.internalLeavePlayer(this);
             this.game = null;
             this.isSpectator = false;
             this.clean();
@@ -51,11 +51,11 @@ public class GamePlayer  {
             this.game.internalJoinPlayer(this);
             this.latestGame = this.game.getName();
         } else if (this.game != null) {
-//            this.game.internalLeavePlayer(this);
+            this.game.internalLeavePlayer(this);
             this.game = game;
             this.isSpectator = false;
             this.clean();
-//            this.game.internalJoinPlayer(this);
+            this.game.internalJoinPlayer(this);
             this.latestGame = this.game.getName();
         }
     }

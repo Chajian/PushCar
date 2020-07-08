@@ -93,7 +93,20 @@ public class Configurator {
         AtomicBoolean modify = new AtomicBoolean(true);
 
         checkOrSetConfig(modify, "locale", "en");
+        checkOrSetConfig(modify,"hotbar.selector",4);
 
+        checkOrSetConfig(modify, "items.jointeam", "COMPASS");
+        checkOrSetConfig(modify, "items.leavegame", "SLIME_BALL");
+        checkOrSetConfig(modify, "items.startgame", "DIAMOND");
+        checkOrSetConfig(modify, "items.shopback", "BARRIER");
+        checkOrSetConfig(modify, "items.shopcosmetic",
+                Main.isLegacy() ? new ItemStack(Material.getMaterial("STAINED_GLASS_PANE"), 1, (short) 7)
+                        : "GRAY_STAINED_GLASS_PANE");
+        checkOrSetConfig(modify, "items.pageback", "ARROW");
+        checkOrSetConfig(modify, "items.pageforward", "ARROW");
+        checkOrSetConfig(modify, "items.team-select",
+                Main.isLegacy() ? new ItemStack(Material.getMaterial("WOOL"), 1, (short) 1)
+                        : "WHITE_WOOL");
 
 
         if (modify.get()) {

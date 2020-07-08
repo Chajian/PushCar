@@ -1,13 +1,15 @@
 package com.ibs.oldman.pushcar.game;
 
+import com.ibs.oldman.pushcar.Main;
 import com.ibs.oldman.pushcar.api.game.RunningTeam;
 import com.ibs.oldman.pushcar.api.game.TeamColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,8 @@ public class CurrentTeam implements RunningTeam {
     /*团队放置的方块*/
     private List<Block> chests = new ArrayList<>();
     private Game game;
+    /*矿车*/
+    private Vehicle minecart;
 //    private Hologram holo;
 //    private Hologram protectHolo;
 
@@ -113,6 +117,11 @@ public class CurrentTeam implements RunningTeam {
     }
 
     @Override
+    public Location getTargetBed() {
+        return teamInfo.getTargetBed();
+    }
+
+    @Override
     public int getMaxPlayers() {
         return teamInfo.getMaxPlayers();
     }
@@ -184,11 +193,48 @@ public class CurrentTeam implements RunningTeam {
         return null;
     }
 
-//    @Override
-//    public Game getGame() {
-//        return game;
-//    }
+    /*获得矿车的位置*/
+    public Location getCartLocation(){
+        if(minecart != null)
+        return minecart.getLocation();
+        return null;
+    }
 
+    /*获取矿车实体*/
+    public Entity getInstanceCart(){
+        if(minecart == null) {
+            minecart = (Vehicle) game.getWorld().spawnEntity(getTargetBlock(), EntityType.MINECART);
+            Main.registerGameEntity(minecart,game);
+            Vector vector = new Vector(-43,71,54);
+            minecart.setVelocity(vector);
+        }
+        return minecart;
+    }
+
+    /*判断矿车是否属于团队*/
+    public boolean isCartInTeam(Entity entity){
+        if(minecart.getEntityId()==entity.getEntityId())
+            return true;
+        return false;
+    }
+
+    /*传送所有玩家到出生点*/
+    public void teleportPlayersToSpawn(){
+        for(GamePlayer gamePlayer:players){
+            gamePlayer.teleport(teamInfo.getTeamSpawn());
+        }
+    }
+
+    /**
+     * 矿车是否到达目的地
+     * @return
+     */
+    public boolean isArrived(){
+        if(minecart.getLocation().distance(getTargetBed())<1){
+            return true;
+        }
+        return false;
+    }
 
 
     @Override

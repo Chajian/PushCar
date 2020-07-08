@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TestCommands implements CommandExecute  {
@@ -25,7 +26,8 @@ public class TestCommands implements CommandExecute  {
         else{
             GameCreator gameCreator = getGameCreatorByName(args[2]);
             if(gameCreator!=null){
-                gameCreator.cmd((Player) sender,args[1],args);
+                String[] argss = Arrays.copyOfRange(args,3,args.length);
+                gameCreator.cmd((Player) sender,args[1],argss);
                 System.out.println("执行成功!");
             }
         }

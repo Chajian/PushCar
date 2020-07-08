@@ -22,6 +22,7 @@ com\ibs\oldman\pushcar\api\event\PushCarPlayerJoinTeamEvent.class
 com\ibs\oldman\pushcar\api\boss\BossBar.class
 com\ibs\oldman\pushcar\api\event\PushCarApplyPropertyToBoughtItem.class
 com\ibs\oldman\pushcar\api\game\Region.class
+com\ibs\oldman\pushcar\api\event\PushCartTickEvent.class
 com\ibs\oldman\pushcar\api\event\PushCarApplyPropertyToDisplayedItem.class
 com\ibs\oldman\pushcar\api\boss\BossBar19.class
 com\ibs\oldman\pushcar\api\game\Registry.class

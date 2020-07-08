@@ -28,7 +28,7 @@ public class CommandHandler implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         //If there aren't any arguments, what is the command name going to be?
         if (strings.length == 0) {
-            getExecutor("effect").onCommand(commandSender, command, s, strings);
+            getExecutor("pushcar").onCommand(commandSender, command, s, strings);
             return true;
         }
 
