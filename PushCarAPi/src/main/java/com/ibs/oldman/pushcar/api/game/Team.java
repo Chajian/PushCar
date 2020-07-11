@@ -33,10 +33,10 @@ public interface Team {
      */
     Location getTeamSpawn();
 
-    /**
-     * @return 获得矿车出生地位置
-     */
-    Location getTargetBlock();
+//    /**
+//     * @return 获得矿车出生地位置
+//     */
+//    Location getTargetBlock();
 
     /**
      *

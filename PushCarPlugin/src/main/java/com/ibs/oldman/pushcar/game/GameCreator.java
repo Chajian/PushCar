@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lang.I.*;
+import static lang.I18n.i18n;
 
 /**
  *游戏创造者
@@ -58,7 +58,11 @@ public class GameCreator {
             response = setLobbySpawn(player.getLocation());
         } else if (action.equalsIgnoreCase("spec")) {
             response = setSpecSpawn(player.getLocation());
-        } else if (action.equalsIgnoreCase("pos1")) {
+        }
+        else if(action.equalsIgnoreCase("cartspawn")){
+            response = setCartSpawn(player.getLocation());
+        }
+        else if (action.equalsIgnoreCase("pos1")) {
             response = setPos1(player.getLocation());
         } else if (action.equalsIgnoreCase("pos2")) {
             response = setPos2(player.getLocation());
@@ -104,8 +108,12 @@ public class GameCreator {
                     }
                 } else if (args[0].equalsIgnoreCase("spawn")) {
                     response = setTeamSpawn(args[1], player.getLocation());
-                } else if (args[0].equalsIgnoreCase("bed")) {
-                    response = setTeamBed(args[1], player.getTargetBlock(null, 5));
+                }
+//                else if (args[0].equalsIgnoreCase("bed")) {
+//                    response = setTeamBed(args[1], player.getLocation());
+//                }
+                else if(args[0].equalsIgnoreCase("target")){
+                    response = setTeamTarget(args[1],player.getLocation());
                 }
             }
         }
@@ -211,11 +219,12 @@ public class GameCreator {
             }
             boolean isTeamsSetCorrectly = true;
             for (Team team : game.getTeams().values()) {
-                if (team.bed == null) {
-                    response = I.i18n("admin_command_set_bed_for_team_before_save").replace("%team%", team.name);
-                    isTeamsSetCorrectly = false;
-                    break;
-                } else if (team.spawn == null) {
+//                if (team.bed == null) {
+//                    response = I.i18n("admin_command_set_bed_for_team_before_save").replace("%team%", team.name);
+//                    isTeamsSetCorrectly = false;
+//                    break;
+//                } else
+                    if (team.spawn == null) {
                     response = I.i18n("admin_command_set_spawn_for_team_before_save").replace("%team%", team.name);
                     isTeamsSetCorrectly = false;
                     break;
@@ -497,10 +506,10 @@ public class GameCreator {
         return I.i18n("admin_command_team_is_not_exists");
     }
 
-    private String setTeamBed(String name, Block block) {
-        for (Team t : game.getTeams().values()) {
-            if (t.name.equals(name)) {
-                Location loc = block.getLocation();
+    private String setTeamTarget(String name,Location loc){
+        for(Team t : game.getTeams().values()){
+            if(t.name.equals(name)){
+//                Location loc = block.getLocation();
                 if (game.getPoint1() == null || game.getPoint2() == null) {
                     return I.i18n("admin_command_set_pos1_pos2_first");
                 }
@@ -510,40 +519,91 @@ public class GameCreator {
                 if (!isInArea(loc, game.getPoint1(), game.getPoint2())) {
                     return I.i18n("admin_command_spawn_must_be_in_area");
                 }
-                if (Main.isLegacy()) {
-                    // Legacy
-                    if (block.getState().getData() instanceof org.bukkit.material.Bed) {
-                        org.bukkit.material.Bed bed = (org.bukkit.material.Bed) block.getState().getData();
-                        if (!bed.isHeadOfBed()) {
-//                            t.bed = LegacyBedUtils.getBedNeighbor(block).getLocation();
-                        } else {
-                            t.bed = loc;
-                        }
-                    } else {
-                        t.bed = loc;
-                    }
-
-                } else {
-                    // 1.13+
-                    if (block.getBlockData() instanceof Bed) {
-                        Bed bed = (Bed) block.getBlockData();
-                        if (bed.getPart() != Part.HEAD) {
-//                            t.bed = FlatteningBedUtils.getBedNeighbor(block).getLocation();
-                        } else {
-                            t.bed = loc;
-                        }
-                    } else {
-                        t.bed = loc;
-                    }
-                }
-                return I.i18n("admin_command_bed_setted").replace("%team%", t.name)
-                        .replace("%x%", Integer.toString(t.bed.getBlockX()))
-                        .replace("%y%", Integer.toString(t.bed.getBlockY()))
-                        .replace("%z%", Integer.toString(t.bed.getBlockZ()));
+                t.targetbed = loc;
+//                if (Main.isLegacy()) {
+//                    // Legacy
+//                    if (block.getState().getData() instanceof org.bukkit.material.Bed) {
+//                        org.bukkit.material.Bed bed = (org.bukkit.material.Bed) block.getState().getData();
+//                        if (!bed.isHeadOfBed()) {
+////                            t.bed = LegacyBedUtils.getBedNeighbor(block).getLocation();
+//                        } else {
+//                            t.targetbed = loc;
+//                        }
+//                    } else {
+//                        t.targetbed = loc;
+//                    }
+//
+//                }
+//                else {
+//                    // 1.13+
+//                    if (block.getBlockData() instanceof Bed) {
+//                        Bed bed = (Bed) block.getBlockData();
+//                        if (bed.getPart() != Part.HEAD) {
+////                            t.bed = FlatteningBedUtils.getBedNeighbor(block).getLocation();
+//                        } else {
+//                            t.targetbed = loc;
+//                        }
+//                    } else {
+//                        t.targetbed = loc;
+//                    }
+//                }
+                return i18n("admin_command_target_setted").replace("%team%", t.name)
+                        .replace("%x%", Integer.toString(t.targetbed.getBlockX()))
+                        .replace("%y%", Integer.toString(t.targetbed.getBlockY()))
+                        .replace("%z%", Integer.toString(t.targetbed.getBlockZ()));
             }
         }
-        return I.i18n("admin_command_team_is_not_exists");
+        return i18n("admin_command_team_is_not_exists");
     }
+
+//    private String setTeamBed(String name, Location loc) {
+//        for (Team t : game.getTeams().values()) {
+//            if (t.name.equals(name)) {
+////                Location loc = block.getLocation();
+//                if (game.getPoint1() == null || game.getPoint2() == null) {
+//                    return I.i18n("admin_command_set_pos1_pos2_first");
+//                }
+//                if (game.getWorld() != loc.getWorld()) {
+//                    return I.i18n("admin_command_must_be_in_same_world");
+//                }
+//                if (!isInArea(loc, game.getPoint1(), game.getPoint2())) {
+//                    return I.i18n("admin_command_spawn_must_be_in_area");
+//                }
+////                t.bed = loc;
+////                if (Main.isLegacy()) {
+////                    // Legacy
+////                    if (block.getState().getData() instanceof org.bukkit.material.Bed) {
+////                        org.bukkit.material.Bed bed = (org.bukkit.material.Bed) block.getState().getData();
+////                        if (!bed.isHeadOfBed()) {
+//////                            t.bed = LegacyBedUtils.getBedNeighbor(block).getLocation();
+////                        } else {
+////                            t.bed = loc;
+////                        }
+////                    } else {
+////                        t.bed = loc;
+////                    }
+////
+////                } else {
+////                    // 1.13+
+////                    if (block.getBlockData() instanceof Bed) {
+////                        Bed bed = (Bed) block.getBlockData();
+////                        if (bed.getPart() != Part.HEAD) {
+//////                            t.bed = FlatteningBedUtils.getBedNeighbor(block).getLocation();
+////                        } else {
+////                            t.bed = loc;
+////                        }
+////                    } else {
+////                        t.bed = loc;
+////                    }
+////                }
+//                return I.i18n("admin_command_bed_setted").replace("%team%", t.name)
+//                        .replace("%x%", Integer.toString(t.bed.getBlockX()))
+//                        .replace("%y%", Integer.toString(t.bed.getBlockY()))
+//                        .replace("%z%", Integer.toString(t.bed.getBlockZ()));
+//            }
+//        }
+//        return I.i18n("admin_command_team_is_not_exists");
+//    }
 
     private String setTeamSpawn(String name, Location loc) {
         for (Team t : game.getTeams().values()) {
@@ -744,6 +804,13 @@ public class GameCreator {
     public String setLobbySpawn(Location loc) {
         game.setLobbySpawn(loc);
         return I.i18n("admin_command_lobby_spawn_setted").replace("%x%", Double.toString(loc.getX()))
+                .replace("%y%", Double.toString(loc.getY())).replace("%z%", Double.toString(loc.getZ()))
+                .replace("%yaw%", Float.toString(loc.getYaw())).replace("%pitch%", Float.toString(loc.getPitch()));
+    }
+
+    public String setCartSpawn(Location loc){
+        game.setCartSpawn(loc);
+        return I.i18n("admin_command_cart_spawn_setted").replace("%x%", Double.toString(loc.getX()))
                 .replace("%y%", Double.toString(loc.getY())).replace("%z%", Double.toString(loc.getZ()))
                 .replace("%yaw%", Float.toString(loc.getYaw())).replace("%pitch%", Float.toString(loc.getPitch()));
     }

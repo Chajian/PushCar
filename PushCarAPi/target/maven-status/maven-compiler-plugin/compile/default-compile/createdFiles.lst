@@ -2,6 +2,7 @@ com\ibs\oldman\pushcar\api\event\PushCarPlayerJoinEvent.class
 com\ibs\oldman\pushcar\api\spawner\ItemSpawnerType.class
 com\ibs\oldman\pushcar\api\game\InGameConfigBooleanConstants.class
 com\ibs\oldman\pushcar\api\game\Team.class
+com\ibs\oldman\pushcar\api\game\DropItemSpawner.class
 com\ibs\oldman\pushcar\api\util\ColorChanger.class
 com\ibs\oldman\pushcar\api\game\Game.class
 com\ibs\oldman\pushcar\api\game\GameStatus.class
@@ -11,11 +12,13 @@ com\ibs\oldman\pushcar\api\game\RunningTeam.class
 com\ibs\oldman\pushcar\api\event\PushCarPlayerLeaveEvent.class
 com\ibs\oldman\pushcar\api\event\PushCarApplyPropertyToItem.class
 com\ibs\oldman\pushcar\api\event\PushCarPlayerKilledEvent.class
+com\ibs\oldman\pushcar\api\boss\BossBar18.class
 com\ibs\oldman\pushcar\api\boss\XPBar.class
 com\ibs\oldman\pushcar\api\statistics\PlayerStatistic.class
 com\ibs\oldman\pushcar\api\PushCarApi.class
 com\ibs\oldman\pushcar\api\spawner\ItemSpawner.class
 com\ibs\oldman\pushcar\api\event\PushCarPlayerJoinedEvent.class
+com\ibs\oldman\pushcar\api\game\ChestItemSpawner.class
 com\ibs\oldman\pushcar\api\game\GameStore.class
 com\ibs\oldman\pushcar\api\boss\StatusBar.class
 com\ibs\oldman\pushcar\api\event\PushCarPlayerJoinTeamEvent.class

@@ -1,6 +1,7 @@
 package com.ibs.oldman.pushcar.game;
 
 import com.ibs.oldman.pushcar.Main;
+import com.ibs.oldman.pushcar.api.game.GameStatus;
 import com.ibs.oldman.pushcar.api.game.RunningTeam;
 import com.ibs.oldman.pushcar.api.game.TeamColor;
 import org.bukkit.Bukkit;
@@ -9,6 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ public class CurrentTeam implements RunningTeam {
     /*团队放置的方块*/
     private List<Block> chests = new ArrayList<>();
     private Game game;
+    private int near_player = 0;
     /*矿车*/
     private Vehicle minecart;
 //    private Hologram holo;
@@ -81,6 +84,7 @@ public class CurrentTeam implements RunningTeam {
 //        return this.protectHolo != null;
 //    }
 
+
     @Override
     public String getName() {
         return teamInfo.getName();
@@ -111,10 +115,10 @@ public class CurrentTeam implements RunningTeam {
         return teamInfo.getTeamSpawn();
     }
 
-    @Override
-    public Location getTargetBlock() {
-        return teamInfo.getTargetBlock();
-    }
+//    @Override
+//    public Location getTargetBlock() {
+//        return teamInfo.getTargetBlock();
+//    }
 
     @Override
     public Location getTargetBed() {
@@ -201,14 +205,51 @@ public class CurrentTeam implements RunningTeam {
     }
 
     /*获取矿车实体*/
-    public Entity getInstanceCart(){
-        if(minecart == null) {
-            minecart = (Vehicle) game.getWorld().spawnEntity(getTargetBlock(), EntityType.MINECART);
-            Main.registerGameEntity(minecart,game);
-            Vector vector = new Vector(-43,71,54);
-            minecart.setVelocity(vector);
+//    public Entity getInstanceCart(){
+//        if(minecart == null) {
+////            minecart = (Vehicle) game.getWorld().spawnEntity(getTargetBlock(), EntityType.MINECART);
+//            Main.registerGameEntity(minecart,game);
+//            Vector cart_vector = minecart.getVelocity();
+//            Vector target_vector = getTargetBed().toVector();
+//            double distance = cart_vector.distance(target_vector);
+//            System.out.println("角度:"+distance*-1);
+//            cart_vector.setX(cart_vector.getX()-distance);
+//            cart_vector.setZ(cart_vector.getZ()-distance);
+//            minecart.setVelocity(cart_vector);
+//        }
+//        return minecart;
+//    }
+
+
+    //发车
+    public synchronized void launchCart(){
+        near_player = 0;
+        if(game.getGameStatus() == GameStatus.RUNNING){
+            List<Entity> list = minecart.getNearbyEntities(teamInfo.cart_range,teamInfo.cart_range,teamInfo.cart_range);
+            for(Entity entity:list){
+                if(entity instanceof Player){
+                    Player player = (Player) entity;
+                    if(isPlayerInTeam(player)){
+                        near_player++;
+                    }
+                }
+            }
+            Vector cart_vector = minecart.getVelocity();
+            Vector cart_target = cart_vector.clone();
+            //设置矿车速度
+            if(near_player>0) {
+                if (getTargetBed().getX() < minecart.getLocation().getX()) {
+                    cart_target.setX(cart_vector.getX() - (teamInfo.cart_speed * near_player));
+                    cart_target.setZ(cart_vector.getZ() - (teamInfo.cart_speed * near_player));
+                    System.out.println(getName() + "-:" + cart_target.toString() + ":            :" + getTargetBed().toVector().toString());
+                } else {
+                    cart_target.setX(cart_vector.getX() + (teamInfo.cart_speed * near_player));
+                    cart_target.setZ(cart_vector.getZ() + (teamInfo.cart_speed * near_player));
+                    System.out.println(getName() + "+:" + cart_target.toString() + ":            :" + getTargetBed().toVector().toString());
+                }
+                minecart.setVelocity(cart_target);
+            }
         }
-        return minecart;
     }
 
     /*判断矿车是否属于团队*/
@@ -225,6 +266,7 @@ public class CurrentTeam implements RunningTeam {
         }
     }
 
+
     /**
      * 矿车是否到达目的地
      * @return
@@ -236,6 +278,9 @@ public class CurrentTeam implements RunningTeam {
         return false;
     }
 
+    public void setMinecart(Vehicle minecart) {
+        this.minecart = minecart;
+    }
 
     @Override
     public int countTeamChests() {

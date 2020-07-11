@@ -47,6 +47,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>me.confuser</groupId>
+      <artifactId>BarAPI</artifactId>
+      <version>3.5</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>com.onarandombox.multiversecore</groupId>
       <artifactId>Multiverse-Core</artifactId>
       <version>4.0.0</version>

@@ -7,13 +7,16 @@ import com.ibs.oldman.pushcar.game.TeamColor;
 import com.ibs.oldman.pushcar.config.Configurator;
 import com.ibs.oldman.pushcar.game.Game;
 import com.ibs.oldman.pushcar.game.GamePlayer;
+import com.ibs.oldman.pushcar.lib.nms.util.ClassStorage;
 import com.ibs.oldman.pushcar.listener.CarEvent;
 import com.ibs.oldman.pushcar.listener.PlayerEvent;
 import com.ibs.oldman.pushcar.listener.WorldEvent;
 import com.ibs.oldman.pushcar.utils.ColorChanger;
 import lang.I18n;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -60,6 +63,19 @@ public class Main extends JavaPlugin implements PushCarApi {
     public void onDisable() {
         Bukkit.getServer().getLogger().info("卸载老汉推车插件");
         isDisabling = true;
+//        if (signManager != null) {
+//            signManager.save();
+//        }
+        for (Game game : games.values()) {
+            game.stop();
+        }
+        this.getServer().getServicesManager().unregisterAll(this);
+
+//        if (isHologramsEnabled() && hologramInteraction != null) {
+//            hologramInteraction.unloadHolograms();
+//        }
+//
+//        metrics = null;
     }
 
     @Override
@@ -72,6 +88,7 @@ public class Main extends JavaPlugin implements PushCarApi {
         I18n.load(this, configurator.config.getString("locale"));//加载插件语言配置信息
         CommandHandler commandHandler = new CommandHandler()
                 .register("admin",new AdminCommands())
+                .register("test",new TestCommands())
                 .register("leave",new LeaveCommands())
                 .register("help",new HelpCommands())
                 .register("join",new JoinCommands());
@@ -85,11 +102,13 @@ public class Main extends JavaPlugin implements PushCarApi {
         //检测版本号
         String[] bukkitVersion = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
         versionNumber = 0;
+        version = this.getDescription().getVersion();
 
         for (int i = 0; i < 2; i++) {
             versionNumber += Integer.parseInt(bukkitVersion[i]) * (i == 0 ? 100 : 1);
         }
         isLegacy = versionNumber < 113;
+        isSpigot = ClassStorage.IS_SPIGOT_SERVER;
 
         System.out.println("版本号"+versionNumber+": "+isLegacy);
         //初始化竞技场
@@ -137,6 +156,23 @@ public class Main extends JavaPlugin implements PushCarApi {
         return lastEntry.getValue();
     }
 
+    public static boolean isFarmBlock(Material mat) {
+        if (main.configurator.config.getBoolean("farmBlocks.enable",false)) {
+            List<String> list = (List<String>) main.configurator.config.getList("farmBlocks.blocks");
+            return list.contains(mat.name());
+        }
+        return false;
+    }
+
+    public static boolean isBreakableBlock(Material mat) {
+        if (main.configurator.config.getBoolean("breakable.enabled",false)) {
+            List<String> list = (List<String>) main.configurator.config.getList("breakable.blocks");
+            boolean asblacklist = main.configurator.config.getBoolean("breakable.asblacklist", false);
+            return list.contains(mat.name()) ? !asblacklist : asblacklist;
+        }
+        return false;
+    }
+
     public HashMap<String, Game> getGames() {
         return games;
     }
@@ -144,6 +180,10 @@ public class Main extends JavaPlugin implements PushCarApi {
 
     public static Main getMain() {
         return main;
+    }
+
+    public boolean isEntityInGame(Entity entity) {
+        return entitiesInGame.containsKey(entity);
     }
 
     public static Game getGame(String string) {
@@ -172,6 +212,10 @@ public class Main extends JavaPlugin implements PushCarApi {
         return gPlayer;
     }
 
+    public static Game getInGameEntity(Entity entity) {
+        return main.entitiesInGame.getOrDefault(entity, null);
+    }
+
     /**
      * 获取玩家所在的游戏对象
      * @param player 玩家
@@ -193,7 +237,7 @@ public class Main extends JavaPlugin implements PushCarApi {
     }
 
     public static boolean isSpigot() {
-        return isSpigot();
+        return isSpigot;
     }
 
     public static void unregisterGameEntity(Entity entity) {
@@ -252,6 +296,23 @@ public class Main extends JavaPlugin implements PushCarApi {
         for(Game game : main.games.values())
             if(game.isCartInTeam(entity))
                 return true;
+        return false;
+    }
+
+    //通过烟花获取game对象
+    public static Game getGameByFirework(Firework firework){
+        for(Game game:main.games.values()){
+            if(game.isFireworkInGame(firework))
+                return game;
+        }
+        return null;
+    }
+
+    public static boolean isFireworkInGame(Firework firework){
+        for(Game game:main.games.values()){
+            if(game.isFireworkInGame(firework))
+                return true;
+        }
         return false;
     }
 

@@ -3,6 +3,7 @@ package com.ibs.oldman.pushcar.api.game;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
 
 import java.util.List;
 
@@ -67,6 +68,12 @@ public interface Game  {
     boolean isPlayerInTeam(Player player,RunningTeam team);
 
     boolean isLocationInArena(Location location);
+
+    Location getCartSpawn();
+
+    void setCartSpawn(Location location);
+
+    Vehicle getCart();
 
 
 

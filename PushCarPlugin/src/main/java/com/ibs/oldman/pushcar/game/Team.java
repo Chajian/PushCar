@@ -8,18 +8,22 @@ import org.bukkit.Location;
 public class Team implements com.ibs.oldman.pushcar.api.game.Team {
     public TeamColor teamColor;
     public String name;
-    public Location bed;//矿车出生位置
+//    public Location bed;//矿车出生位置
     public Location targetbed;//矿车目的地
     public Location spawn;
     public int maxplayers;
     public Game game;
+    /*矿车速度*/
+    public double cart_speed;
+    /*矿车范围*/
+    public double cart_range;
 
 
     public Team clone() {
         Team t = new Team();
         t.teamColor = this.teamColor;
         t.name = this.name;
-        t.bed = this.bed;
+//        t.bed = this.bed;
         t.spawn = this.spawn;
         t.maxplayers = this.maxplayers;
         t.game = this.game;
@@ -47,10 +51,10 @@ public class Team implements com.ibs.oldman.pushcar.api.game.Team {
         return spawn;
     }
 
-    @Override
-    public Location getTargetBlock() {
-        return bed;
-    }
+//    @Override
+//    public Location getTargetBlock() {
+//        return bed;
+//    }
 
     @Override
     public int getMaxPlayers() {

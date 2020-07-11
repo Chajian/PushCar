@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -16,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 配置器
  */
 public class Configurator {
-    public File configFile, shopFile, signsFile, recordFile, langFolder;
+    public File configFile, shopFile, signsFile, recordFile, langFolder,dropitems,chestitems;
     public FileConfiguration config, recordConfig;
 
     public final File dataFolder;
@@ -34,6 +35,8 @@ public class Configurator {
         signsFile = new File(dataFolder, "sign.yml");
         recordFile = new File(dataFolder, "record.yml");
         langFolder = new File(dataFolder.toString(), "languages");
+        dropitems = new File(dataFolder,"dropitems");
+        chestitems = new File(chestitems,"chestitems");
 
         config = new YamlConfiguration();
         recordConfig = new YamlConfiguration();
@@ -94,11 +97,31 @@ public class Configurator {
 
         checkOrSetConfig(modify, "locale", "en");
         checkOrSetConfig(modify,"hotbar.selector",4);
-
+        checkOrSetConfig(modify, "scoreboard.title", "§a%game%§r - %time%");
+        checkOrSetConfig(modify, "bossbar.game.color", "GREEN");
+        checkOrSetConfig(modify, "bossbar.game.style", "SEGMENTED_20");
+        checkOrSetConfig(modify, "bossbar.lobby.color", "YELLOW");
+        checkOrSetConfig(modify, "bossbar.lobby.style", "SEGMENTED_20");
         checkOrSetConfig(modify, "items.jointeam", "COMPASS");
         checkOrSetConfig(modify, "items.leavegame", "SLIME_BALL");
         checkOrSetConfig(modify, "items.startgame", "DIAMOND");
         checkOrSetConfig(modify, "items.shopback", "BARRIER");
+
+        checkOrSetConfig(modify, "sounds.on_bed_destroyed", "ENTITY_ENDER_DRAGON_GROWL");
+        checkOrSetConfig(modify, "sounds.on_countdown", "UI_BUTTON_CLICK");
+        checkOrSetConfig(modify, "sounds.on_game_start", "ENTITY_PLAYER_LEVELUP");
+        checkOrSetConfig(modify, "sounds.on_team_kill", "ENTITY_PLAYER_LEVELUP");
+        checkOrSetConfig(modify, "sounds.on_player_kill", "ENTITY_PLAYER_BIG_FALL");
+        checkOrSetConfig(modify, "sounds.on_item_buy", "ENTITY_ITEM_PICKUP");
+        checkOrSetConfig(modify, "sounds.on_upgrade_buy", "ENTITY_EXPERIENCE_ORB_PICKUP");
+        checkOrSetConfig(modify, "sounds.on_respawn_cooldown_wait", "UI_BUTTON_CLICK");
+        checkOrSetConfig(modify, "sounds.on_respawn_cooldown_done", "ENTITY_PLAYER_LEVELUP");
+
+        checkOrSetConfig(modify, "lobby-scoreboard.content", Arrays.asList(" ", "§fMap: §2%arena%",
+                "§fPlayers: §2%players%§f/§2%maxplayers%","§fwaiting_time: §2%waitingtime%", " ", "§fWaiting ...", " "));
+        checkOrSetConfig(modify,"running-scoreboard.content",Arrays.asList(" ", "§fMap: §2%teamname%",
+                "§fTeam_Players: §2%players%","§fwaiting_time: §2%waitingtime%","§fkills: §2%kills%","§fscore: §2%scores%", " ", "§fWaiting ...", " "));
+
         checkOrSetConfig(modify, "items.shopcosmetic",
                 Main.isLegacy() ? new ItemStack(Material.getMaterial("STAINED_GLASS_PANE"), 1, (short) 7)
                         : "GRAY_STAINED_GLASS_PANE");
