@@ -1,3 +1,4 @@
+com\ibs\oldman\pushcar\game\entity\Coordinate.class
 com\ibs\oldman\pushcar\game\Region.class
 com\ibs\oldman\pushcar\utils\TeamJoinMetaDataValue.class
 com\ibs\oldman\pushcar\config\Configurator.class
@@ -6,7 +7,9 @@ com\ibs\oldman\pushcar\command\HelpCommands.class
 com\ibs\oldman\pushcar\lib\nms\entity\PlayerUtils.class
 com\ibs\oldman\pushcar\boss\BossBarSelector.class
 com\ibs\oldman\pushcar\boss\BossBar18.class
+com\ibs\oldman\pushcar\game\entity\ImpleEffect.class
 lang\Message.class
+com\ibs\oldman\pushcar\game\entity\BaseEffect.class
 com\ibs\oldman\pushcar\command\CommandExecute.class
 com\ibs\oldman\pushcar\listener\WorldEvent.class
 lang\BukkitTranslateContainer.class
@@ -24,18 +27,22 @@ com\ibs\oldman\pushcar\command\CommandHandler.class
 com\ibs\oldman\pushcar\game\IpmChestItemSpawner.class
 com\ibs\oldman\pushcar\lib\nms\entity\PlayerUtils$1.class
 com\ibs\oldman\pushcar\command\BaseCommands.class
+com\ibs\oldman\pushcar\game\EffectThread.class
 com\ibs\oldman\pushcar\command\AdminCommands.class
 com\ibs\oldman\pushcar\game\Team.class
 com\ibs\oldman\pushcar\command\LeaveCommands.class
+com\ibs\oldman\pushcar\inventory\ExpertSelectorInventory.class
 com\ibs\oldman\pushcar\listener\PlayerEvent$1.class
 com\ibs\oldman\pushcar\utils\SpawnEffects.class
 com\ibs\oldman\pushcar\lib\nms\util\MiscUtils.class
 com\ibs\oldman\pushcar\game\GameCreator.class
+com\ibs\oldman\pushcar\game\entity\wave\BeamLight.class
 com\ibs\oldman\pushcar\game\Game$4.class
 com\ibs\oldman\pushcar\lib\nms\util\InstanceMethod.class
 com\ibs\oldman\pushcar\utils\BungeeUtils.class
 com\ibs\oldman\pushcar\listener\PlayerEvent$2.class
 lang\ITranslateContainer.class
+com\ibs\oldman\pushcar\game\Expert.class
 com\ibs\oldman\pushcar\utils\BungeeUtils$2.class
 lang\I.class
 com\ibs\oldman\pushcar\utils\Title.class
@@ -58,6 +65,7 @@ com\ibs\oldman\pushcar\lib\nms\util\MiscUtils$1.class
 com\ibs\oldman\pushcar\game\RespawnProtection.class
 com\ibs\oldman\pushcar\game\TeamColor.class
 com\ibs\oldman\pushcar\command\TestCommands.class
+com\ibs\oldman\pushcar\game\Expert$1.class
 com\ibs\oldman\pushcar\listener\PlayerEvent.class
 com\ibs\oldman\pushcar\game\Game$2.class
 com\ibs\oldman\pushcar\game\GamePlayer.class

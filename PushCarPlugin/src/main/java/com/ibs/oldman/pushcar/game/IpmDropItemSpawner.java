@@ -1,6 +1,7 @@
 package com.ibs.oldman.pushcar.game;
 
 import com.ibs.oldman.pushcar.api.game.Team;
+import com.ibs.oldman.pushcar.game.entity.wave.BeamLight;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -23,6 +24,7 @@ public class IpmDropItemSpawner implements com.ibs.oldman.pushcar.api.game.DropI
     private Team team;
     private String name;
     private List<ItemStack> producedRes = new ArrayList<>();
+
     /**
      *
      * @param currentdown 生成倒计时
@@ -105,18 +107,12 @@ public class IpmDropItemSpawner implements com.ibs.oldman.pushcar.api.game.DropI
         }
     }
 
-    /**
-     * 生产空投箱子
-     */
-    public void produceChest(){
 
+
+
+    public void clearAllItems(){
+        producedRes.clear();
     }
-
-    //信标是否存在
-    public void switchBeacon(boolean exist){
-
-    }
-
 
 
     /**

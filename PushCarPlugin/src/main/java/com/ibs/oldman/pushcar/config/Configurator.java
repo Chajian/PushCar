@@ -103,6 +103,7 @@ public class Configurator {
         checkOrSetConfig(modify, "bossbar.lobby.color", "YELLOW");
         checkOrSetConfig(modify, "bossbar.lobby.style", "SEGMENTED_20");
         checkOrSetConfig(modify, "items.jointeam", "COMPASS");
+        checkOrSetConfig(modify,"expter.select","IRON_AXE");
         checkOrSetConfig(modify, "items.leavegame", "SLIME_BALL");
         checkOrSetConfig(modify, "items.startgame", "DIAMOND");
         checkOrSetConfig(modify, "items.shopback", "BARRIER");
@@ -116,6 +117,9 @@ public class Configurator {
         checkOrSetConfig(modify, "sounds.on_upgrade_buy", "ENTITY_EXPERIENCE_ORB_PICKUP");
         checkOrSetConfig(modify, "sounds.on_respawn_cooldown_wait", "UI_BUTTON_CLICK");
         checkOrSetConfig(modify, "sounds.on_respawn_cooldown_done", "ENTITY_PLAYER_LEVELUP");
+
+        checkOrSetConfig(modify,"chat.send-death-messages-just-in-game",true);
+
 
         checkOrSetConfig(modify, "lobby-scoreboard.content", Arrays.asList(" ", "§fMap: §2%arena%",
                 "§fPlayers: §2%players%§f/§2%maxplayers%","§fwaiting_time: §2%waitingtime%", " ", "§fWaiting ...", " "));

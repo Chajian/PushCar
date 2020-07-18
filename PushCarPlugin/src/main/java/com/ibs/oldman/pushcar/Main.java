@@ -3,6 +3,7 @@ package com.ibs.oldman.pushcar;
 import com.ibs.oldman.pushcar.api.PushCarApi;
 import com.ibs.oldman.pushcar.api.game.GameStatus;
 import com.ibs.oldman.pushcar.command.*;
+import com.ibs.oldman.pushcar.game.EffectThread;
 import com.ibs.oldman.pushcar.game.TeamColor;
 import com.ibs.oldman.pushcar.config.Configurator;
 import com.ibs.oldman.pushcar.game.Game;
@@ -45,6 +46,7 @@ public class Main extends JavaPlugin implements PushCarApi {
     private static boolean isSpigot = false;
     int versionNumber = 0;
     String version;
+    EffectThread effectThread = null;
     public static List<String> autoColoredMaterials = new ArrayList<>();//自动着色颜料
 
     static {
@@ -70,7 +72,6 @@ public class Main extends JavaPlugin implements PushCarApi {
             game.stop();
         }
         this.getServer().getServicesManager().unregisterAll(this);
-
 //        if (isHologramsEnabled() && hologramInteraction != null) {
 //            hologramInteraction.unloadHolograms();
 //        }
@@ -85,6 +86,10 @@ public class Main extends JavaPlugin implements PushCarApi {
         configurator = new Configurator(main);
         colorChanger = new ColorChanger();
         configurator.createFiles();
+        //粒子
+        effectThread = new EffectThread();
+        effectThread.runTaskTimer(this,500L,10L);
+
         I18n.load(this, configurator.config.getString("locale"));//加载插件语言配置信息
         CommandHandler commandHandler = new CommandHandler()
                 .register("admin",new AdminCommands())

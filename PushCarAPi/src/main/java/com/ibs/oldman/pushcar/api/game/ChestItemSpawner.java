@@ -6,6 +6,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 天降宝箱
@@ -35,7 +36,7 @@ public interface ChestItemSpawner {
     void setAngle(double angle);
 
     /*随机生成物品*/
-    List<ItemStack> getRandomItem();
+    void getRandomItem(Inventory inventory);
 
     void setSpawnLocation(Location location);
 

@@ -1,8 +1,10 @@
 package com.ibs.oldman.pushcar.listener;
 
 import com.ibs.oldman.pushcar.Main;
+import com.ibs.oldman.pushcar.api.game.ExpertType;
 import com.ibs.oldman.pushcar.api.game.GameStatus;
 import com.ibs.oldman.pushcar.game.*;
+import com.ibs.oldman.pushcar.inventory.ExpertSelectorInventory;
 import com.ibs.oldman.pushcar.inventory.TeamSelectorInventory;
 import com.ibs.oldman.pushcar.lib.nms.entity.PlayerUtils;
 import com.ibs.oldman.pushcar.lib.nms.util.MiscUtils;
@@ -34,6 +36,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.screamingsandals.simpleinventories.utils.StackParser;
 
@@ -272,6 +275,9 @@ public class PlayerEvent implements Listener {
                 }
 
                 SpawnEffects.spawnEffect(gPlayer.getGame(), gPlayer.player, "game-effects.respawn");
+
+                Expert expert = new Expert();
+                expert.generateEquipment(team.teamInfo,gPlayer);
 //                if (gPlayer.getGame().getOriginalOrInheritedPlayerRespawnItems()) {
 //                    List<ItemStack> givedGameStartItems = StackParser.parseAll((Collection<Object>) Main.getConfigurator().config
 //                            .getList("gived-player-respawn-items"));
@@ -303,12 +309,13 @@ public class PlayerEvent implements Listener {
 
             if (game.getStatus() == GameStatus.RUNNING) {
 //                if (!game.getOriginalOrInheritedPlayerDrops()) {
-//                    event.getDrops().clear();
-//                }
+                if(true){
+                    event.getDrops().clear();
+                }
                 //处理游戏消息
                 if (Main.getConfigurator().config.getBoolean("chat.send-death-messages-just-in-game")) {
                     String deathMessage = event.getDeathMessage();
-                    if (Main.getConfigurator().config.getBoolean("chat.send-custom-death-messages")) {
+                    if (Main.getConfigurator().config.getBoolean("chat.send-custom-death-messages",true)) {
                         if (event.getEntity().getKiller() != null) {
                             Player killer = event.getEntity().getKiller();
                             GamePlayer gKiller = Main.getPlayerGameProfile(killer);
@@ -545,6 +552,7 @@ public class PlayerEvent implements Listener {
             GamePlayer gPlayer = Main.getPlayerGameProfile(player);
             Game game = gPlayer.getGame();
             if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                //玩家的快捷道具,比如选择队伍，选择职业这种
                 if (game.getStatus() == GameStatus.WAITING || gPlayer.isSpectator) {
                     event.setCancelled(true);
                     if (event.getMaterial() == Material
@@ -572,10 +580,23 @@ public class PlayerEvent implements Listener {
                             .valueOf(Main.getConfigurator().config.getString("items.leavegame", "SLIME_BALL"))) {
                         game.leaveFromGame(player);
                     }
+                    else if (event.getMaterial()==Material.valueOf(Main.getConfigurator().config.getString("expter.select","IRON_AXE"))){
+                        if (game.getStatus() == GameStatus.WAITING) {
+                            ExpertSelectorInventory inv = game.getExpertSelectorInventory();
+                            if (inv == null) {
+                                return;
+                            }
+                            inv.openForPlayer(player);
+                        } else if (gPlayer.isSpectator) {
+                            // TODO
+                        }
+                    }
                 }
 
+                //游戏过程中触发
                 if (game.getStatus() == GameStatus.RUNNING) {
                     if (event.getClickedBlock() != null) {
+                        //检查末影箱
                         if (event.getClickedBlock().getType() == Material.ENDER_CHEST) {
                             Block chest = event.getClickedBlock();
                             CurrentTeam team = game.getTeamOfChest(chest);
@@ -601,7 +622,32 @@ public class PlayerEvent implements Listener {
 
                             player.openInventory(team.getTeamChestInventory());
                             //触发箱子
-                        } else if (event.getClickedBlock().getState() instanceof InventoryHolder) {
+                        }
+                        else if(event.getClickedBlock().getType() == Material.CHEST)
+                        {
+                            Block chest = event.getClickedBlock();
+                            for(IpmChestItemSpawner ipmChestItemSpawner:game.getChestItemSpawners()){
+                                ipmChestItemSpawner.switchBeacon(false,chest.getLocation());
+                            }
+                        }
+                        else if(event.getClickedBlock().getType() == Material.AIR && event.getAction() == Action.RIGHT_CLICK_AIR){
+                            //职业技能
+                            ItemStack hand_item = player.getItemOnCursor();
+                            String name = hand_item.getItemMeta().getDisplayName();
+                            if(name.equals(ExpertType.SWORD.getName())){
+//                                PotionEffect potionEffect = new PotionEffect();
+                            }
+                            else if(name.equals(ExpertType.ARMOR.getName())){
+
+                            }
+                            else if(name.equals(ExpertType.ARROW.getName())){
+
+                            }
+                            else if(name.equals(ExpertType.MAGE.getName())) {
+
+                            }
+                        }
+                        else if (event.getClickedBlock().getState() instanceof InventoryHolder) {
                             InventoryHolder holder = (InventoryHolder) event.getClickedBlock().getState();
 //                            game.addChestForFutureClear(event.getClickedBlock().getLocation(), holder.getInventory());
                         } else if (event.getClickedBlock().getType().name().contains("CAKE") && Main.getConfigurator().config.getBoolean("disableCakeEating", true)) {

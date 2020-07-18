@@ -3,6 +3,7 @@ F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarAPi\src\main\java\com\ibs\o
 F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarAPi\src\main\java\com\ibs\oldman\pushcar\api\boss\BossBar.java
 F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarAPi\src\main\java\com\ibs\oldman\pushcar\api\spawner\ItemSpawnerType.java
 F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarAPi\src\main\java\com\ibs\oldman\pushcar\api\event\PushCarPlayerKilledEvent.java
+F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarAPi\src\main\java\com\ibs\oldman\pushcar\api\game\Expert.java
 F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarAPi\src\main\java\com\ibs\oldman\pushcar\api\game\Region.java
 F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarAPi\src\main\java\com\ibs\oldman\pushcar\api\game\GameStore.java
 F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarAPi\src\main\java\com\ibs\oldman\pushcar\api\event\PushCarPlayerJoinEvent.java
@@ -17,6 +18,7 @@ F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarAPi\src\main\java\com\ibs\o
 F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarAPi\src\main\java\com\ibs\oldman\pushcar\api\spawner\ItemSpawner.java
 F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarAPi\src\main\java\com\ibs\oldman\pushcar\api\game\GameStatus.java
 F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarAPi\src\main\java\com\ibs\oldman\pushcar\api\event\PushCarApplyPropertyToBoughtItem.java
+F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarAPi\src\main\java\com\ibs\oldman\pushcar\api\game\ExpertType.java
 F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarAPi\src\main\java\com\ibs\oldman\pushcar\api\event\PushCarPlayerLeaveEvent.java
 F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarAPi\src\main\java\com\ibs\oldman\pushcar\api\boss\XPBar.java
 F:\backed\Eback\study\java\demo\oldMenPushCar\PushCarAPi\src\main\java\com\ibs\oldman\pushcar\api\event\PushCarPlayerJoinTeamEvent.java

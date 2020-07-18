@@ -1,6 +1,7 @@
 package com.ibs.oldman.pushcar.game;
 
 import com.ibs.oldman.pushcar.Main;
+import com.ibs.oldman.pushcar.api.game.ExpertType;
 import com.ibs.oldman.pushcar.lib.nms.entity.PlayerUtils;
 import com.ibs.oldman.pushcar.utils.BungeeUtils;
 import org.bukkit.GameMode;
@@ -20,7 +21,7 @@ public class GamePlayer  {
     private Game game = null;
     private String latestGame = null;
     private StoredInventory oldInventory = new StoredInventory();
-
+    private ExpertType expertType = ExpertType.SWORD;
     public boolean isSpectator = false;
     public boolean isTeleportingFromGame_justForInventoryPlugins = false;
 
@@ -162,9 +163,19 @@ public class GamePlayer  {
         this.player.updateInventory();
     }
 
+    public ExpertType getExpertType() {
+        return expertType;
+    }
+
+    public void setExpertType(ExpertType expertType) {
+        this.expertType = expertType;
+    }
+
+
+
     /*
-    传送
-     */
+        传送
+         */
     public boolean teleport(Location location) {
         return PlayerUtils.teleportPlayer(player, location);
     }

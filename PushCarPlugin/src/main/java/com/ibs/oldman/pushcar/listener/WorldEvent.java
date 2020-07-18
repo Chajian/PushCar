@@ -261,7 +261,8 @@ public class WorldEvent implements Listener {
         if(Main.isFireworkInGame(firework)){
             Game game = Main.getGameByFirework(firework);
             IpmChestItemSpawner ipmChestItemSpawner = game.getChestItemSpawnerByFirework(firework);
-//            ipmChestItemSpawner.
+            ipmChestItemSpawner.produceChest(firework.getLocation());
+            ipmChestItemSpawner.produceBeacon(firework.getLocation());
         }
     }
 

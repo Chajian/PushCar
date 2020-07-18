@@ -14,6 +14,7 @@ com\ibs\oldman\pushcar\api\event\PushCarApplyPropertyToItem.class
 com\ibs\oldman\pushcar\api\event\PushCarPlayerKilledEvent.class
 com\ibs\oldman\pushcar\api\boss\BossBar18.class
 com\ibs\oldman\pushcar\api\boss\XPBar.class
+com\ibs\oldman\pushcar\api\game\ExpertType.class
 com\ibs\oldman\pushcar\api\statistics\PlayerStatistic.class
 com\ibs\oldman\pushcar\api\PushCarApi.class
 com\ibs\oldman\pushcar\api\spawner\ItemSpawner.class
@@ -24,6 +25,7 @@ com\ibs\oldman\pushcar\api\boss\StatusBar.class
 com\ibs\oldman\pushcar\api\event\PushCarPlayerJoinTeamEvent.class
 com\ibs\oldman\pushcar\api\boss\BossBar.class
 com\ibs\oldman\pushcar\api\event\PushCarApplyPropertyToBoughtItem.class
+com\ibs\oldman\pushcar\api\game\Expert.class
 com\ibs\oldman\pushcar\api\game\Region.class
 com\ibs\oldman\pushcar\api\event\PushCartTickEvent.class
 com\ibs\oldman\pushcar\api\event\PushCarApplyPropertyToDisplayedItem.class

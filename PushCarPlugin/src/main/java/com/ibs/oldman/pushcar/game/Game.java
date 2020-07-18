@@ -14,6 +14,7 @@ import static lang.I.*;
 import com.ibs.oldman.pushcar.api.spawner.ItemSpawner;
 import com.ibs.oldman.pushcar.boss.BossBarSelector;
 import com.ibs.oldman.pushcar.boss.XPBar;
+import com.ibs.oldman.pushcar.inventory.ExpertSelectorInventory;
 import com.ibs.oldman.pushcar.utils.Sounds;
 import com.ibs.oldman.pushcar.utils.Title;
 import com.onarandombox.MultiverseCore.api.Core;
@@ -80,6 +81,9 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
     private int previousCountdown = -1;
     /*团队选择窗口*/
     private TeamSelectorInventory teamSelectorInventory;
+    private ExpertSelectorInventory expertSelectorInventory;
+    /*生成职业装备*/
+    Expert expert = new Expert();
     /*矿车*/
     private Vehicle vehicle = null;
     private static Main main = null;
@@ -221,6 +225,8 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
 
         selectTeam(profile, team.getName());
     }
+
+
 
 
     @Override
@@ -435,6 +441,7 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
         finalStr = finalStr.replace("%maxplayers%", String.valueOf(maxplayers));
         finalStr = finalStr.replace("%waitingtime%",String.valueOf(countdown));
 
+
         return finalStr;
     }
 
@@ -528,6 +535,22 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
     @Override
     public Location getCartSpawn() {
         return cartSapwn;
+    }
+
+    public List<IpmDropItemSpawner> getDropItemSpawners() {
+        return dropItemSpawners;
+    }
+
+    public void setDropItemSpawners(List<IpmDropItemSpawner> dropItemSpawners) {
+        this.dropItemSpawners = dropItemSpawners;
+    }
+
+    public List<IpmChestItemSpawner> getChestItemSpawners() {
+        return chestItemSpawners;
+    }
+
+    public void setChestItemSpawners(List<IpmChestItemSpawner> chestItemSpawners) {
+        this.chestItemSpawners = chestItemSpawners;
     }
 
     @Override
@@ -708,6 +731,8 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
                 game.teams.put(t.name,t);
             }
         }
+
+
         //读取定点道具生成器
         if(configMap.isSet("dropitems")){
             List<Map<String,Object>> dropitems = (List<Map<String, Object>>) configMap.getList("dropitems");
@@ -723,16 +748,16 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
         }
 
         //读取空投信息
-        if(configMap.isSet("chestitems")){
-            List<Map<String,Object>> chestitems = (List<Map<String, Object>>) configMap.getList("chestitem");
+        if(configMap.isSet("chestitems.property")){
+            List<Map<String,Object>> chestitems = (List<Map<String, Object>>) configMap.getList("chestitems.property");
             for(Map<String,Object> chestitem:chestitems){
                 IpmChestItemSpawner chestItemSpawner = new IpmChestItemSpawner(
                         (int)chestitem.get("currentdown"),
                         (String) chestitem.get("name"),
                         MiscUtils.readLocationFromString(game.world, (String) chestitem.get("spawnlocation")),
-                        (double)chestitem.get("angle"),
+                        0,
                         game,
-                        game.readChestItems((List<Map<String, Object>>) configMap.getList("chestitems.items")));
+                        game.readchestItems(configMap));
                 game.chestItemSpawners.add(chestItemSpawner);
             }
         }
@@ -872,11 +897,6 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
 //        BedwarsPreRebuildingEvent preRebuildingEvent = new BedwarsPreRebuildingEvent(this);
 //        Main.getInstance().getServer().getPluginManager().callEvent(preRebuildingEvent);
 
-        //清理生成的资源
-//        for (ItemSpawner spawner : spawners) {
-//            spawner.currentLevel = spawner.startLevel;
-//            spawner.spawnedItems.clear();
-//        }
         //杀死商人，并且注销
         for (GameStore store : stores) {
             LivingEntity villager = store.kill();
@@ -900,8 +920,8 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
             }
         }
 
-        vehicle.remove();
-        Main.unregisterGameEntity(vehicle);
+//        vehicle.remove();
+//        Main.unregisterGameEntity(vehicle);
 
         // Chest clearing
         //清理箱子的物品
@@ -919,13 +939,12 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
 //            }
 //        }
 //        usedChests.clear();
-
-        // Clear fake ender chests
-        //清理末地箱子
-//        for (Inventory inv : fakeEnderChests.values()) {
-//            inv.clear();
-//        }
-//        fakeEnderChests.clear();
+        for(IpmChestItemSpawner ipmChestItemSpawner:chestItemSpawners){
+            ipmChestItemSpawner.clear();
+        }
+        for(IpmDropItemSpawner ipmDropItemSpawner:dropItemSpawners){
+            ipmDropItemSpawner.clearAllItems();
+        }
 
         // Remove remaining entities registered by other plugins
         //清理其他插件注册的实体
@@ -1003,6 +1022,10 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
         this.previousStatus = previousStatus;
     }
 
+    public ExpertSelectorInventory getExpertSelectorInventory() {
+        return expertSelectorInventory;
+    }
+
     /*玩家加入游戏*/
     public void internalJoinPlayer(GamePlayer gamePlayer){
             if(!players.contains(gamePlayer)){
@@ -1020,8 +1043,8 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
                         @Override
                         public void run() {
 
-    //                    if (true) {
-                            int compassPosition = Main.getConfigurator().config.getInt("hotbar.selector", 0);
+                        if (true) {
+                            int compassPosition = Main.getConfigurator().config.getInt("hotbar.selector", 4);
                             if (compassPosition >= 0 && compassPosition <= 8) {
                                 ItemStack compass = Main.getConfigurator().readDefinedItem("jointeam", "COMPASS");
                                 ItemMeta metaCompass = compass.getItemMeta();
@@ -1029,7 +1052,7 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
                                 compass.setItemMeta(metaCompass);
                                 gamePlayer.player.getInventory().setItem(compassPosition, compass);
                             }
-    //                    }
+                        }
 
                             //离开物品
                             int leavePosition = Main.getConfigurator().config.getInt("hotbar.leave", 8);
@@ -1052,6 +1075,18 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
                                 startGame.setItemMeta(startGameMeta);
 
                                 gamePlayer.player.getInventory().setItem(vipPosition, startGame);
+                            }
+                        }
+
+                        //开启职业
+                        if (true) {
+                            int compassPosition = Main.getConfigurator().config.getInt("expter.selector",2 );
+                            if (compassPosition >= 0 && compassPosition <= 8) {
+                                ItemStack compass = new ItemStack(Material.IRON_AXE);
+                                ItemMeta metaCompass = compass.getItemMeta();
+                                metaCompass.setDisplayName("选择职业");
+                                compass.setItemMeta(metaCompass);
+                                gamePlayer.player.getInventory().setItem(compassPosition, compass);
                             }
                         }
 
@@ -1145,6 +1180,8 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
             if (teamSelectorInventory == null) {
                 teamSelectorInventory = new TeamSelectorInventory(Main.getMain(), this);
             }
+            if(expertSelectorInventory == null)
+                expertSelectorInventory = new ExpertSelectorInventory(Main.getMain(),this);
         }
         nextCountdown = countdown;
         nextStatus = gameStatus;
@@ -1179,7 +1216,6 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
                     //将所有玩家传送到出生点
                     for (CurrentTeam currentTeam : currentTeams) {
                         currentTeam.teleportPlayersToSpawn();
-//                        currentTeam.getInstanceCart();
                         currentTeam.setMinecart(vehicle);
                     }
                     Main.registerGameEntity(vehicle,this);
@@ -1213,6 +1249,8 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
             }
             else{
                 nextCountdown--;
+                //递减主动技能冷却时间
+                expert.diminishingCoolTime();
             }
             for(GamePlayer gamePlayer:players){
                 updateRunningScoreboard(gamePlayer);
@@ -1224,10 +1262,6 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
                 nextStatus = GameStatus.REBUILDING;
                 nextCountdown = 0;
 
-                //踢出所有玩家,这样做的目的是为了防止报错
-//                for (GamePlayer player : (List<GamePlayer>) ((ArrayList<GamePlayer>) players).clone()) {
-//                    player.changeGame(null);
-//
                 for(GamePlayer gamePlayer:(List<GamePlayer>)((ArrayList<GamePlayer>)players).clone()){
                     gamePlayer.changeGame(null);
                 }
@@ -1284,19 +1318,24 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
                     gameScoreboard.getObjective("lobby").unregister();
                 }
                 gameScoreboard.clearSlot(DisplaySlot.SIDEBAR);
-//                for(GamePlayer player:this.players){
-//                    CurrentTeam team = getPlayerTeam(player);
-//                    player.player.getInventory().clear();
-//                    // Player still had armor on legacy versions
-//                    player.player.getInventory().setHelmet(null);
-//                    player.player.getInventory().setChestplate(null);
-//                    player.player.getInventory().setLeggings(null);
-//                    player.player.getInventory().setBoots(null);
-//
-//                    Sounds.playSound(player.player, player.player.getLocation(),
-//                            Main.getConfigurator().config.getString("sounds.on_game_start"),
-//                            Sounds.ENTITY_PLAYER_LEVELUP, 1, 1);
-//                }
+                for(GamePlayer player:this.players){
+                    CurrentTeam team = getPlayerTeam(player);
+                    player.player.getInventory().clear();
+                    // Player still had armor on legacy versions
+                    player.player.getInventory().setHelmet(null);
+                    player.player.getInventory().setChestplate(null);
+                    player.player.getInventory().setLeggings(null);
+                    player.player.getInventory().setBoots(null);
+
+                    Sounds.playSound(player.player, player.player.getLocation(),
+                            Main.getConfigurator().config.getString("sounds.on_game_start"),
+                            Sounds.ENTITY_PLAYER_LEVELUP, 1, 1);
+                }
+
+
+                for(GamePlayer gamePlayer:this.players){
+                    expert.generateEquipment(getPlayerTeam(gamePlayer).teamInfo,gamePlayer);
+                }
 //
             }
 
@@ -1321,8 +1360,9 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
                 ipmDropItemSpawner.runTask(getWorld());
             }
 
+            //发射空投
             for(IpmChestItemSpawner chestItemSpawner:chestItemSpawners){
-//                chestItemSpawner.runTask(getWorld());
+                chestItemSpawner.launchFireWork(getWorld(),this);
             }
 
             //游戏结束的奖励惩罚措施
@@ -1509,7 +1549,10 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
     }
 
 
-    /*处理玩家加入团队*/
+    /*处理玩家加入团队
+    * 初始装备，记分板，boss提示框
+    *
+    * */
     private void internalTeamJoin(GamePlayer player, Team teamForJoin) {
         CurrentTeam current = null;
         for (CurrentTeam t : currentTeams) {
@@ -1593,7 +1636,7 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
             }
         }
 
-        //皮革套装
+        //职业套装
         if (true) {
             ItemStack chestplate = new ItemStack(Material.LEATHER_CHESTPLATE);
             LeatherArmorMeta meta = (LeatherArmorMeta) chestplate.getItemMeta();
@@ -1689,8 +1732,8 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
             chestitemMap.put("currentdown",chestItemSpawner.getCurrentDown());
             chestitemMap.put("name",chestItemSpawner.getName());
             chestitemMap.put("spawnlocation",MiscUtils.setLocationToString(chestItemSpawner.getSpawnLocation()));
-            chestitemMap.put("chestlocation",MiscUtils.setLocationToString(chestItemSpawner.getChestLocation()));
-            chestitemMap.put("angle",chestItemSpawner.getAngle());
+//            chestitemMap.put("chestlocation",MiscUtils.setLocationToString(chestItemSpawner.getChestLocation()));
+//            chestitemMap.put("angle",chestItemSpawner.getAngle());
             tS.add(chestitemMap);
         }
         configMap.set("chestitems",tS);
@@ -1928,12 +1971,36 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
 
     /*读取宝箱物品列表*/
     public List<ItemStack> readChestItems(List<Map<String,Object>> maps){
+
         List<ItemStack> list = new ArrayList<>();
         if(maps!=null && !maps.isEmpty())
             for(Map<String,Object>item:maps){
                 ItemStack itemStack = new ItemStack(Material.valueOf((String) item.get("type")));
                 list.add(itemStack);
             }
+        return list;
+    }
+
+    /**
+     * 读取物品信息
+     * @param configMap
+     * @return
+     */
+    public List<ItemStack> readchestItems(FileConfiguration configMap){
+        //读取队伍信息
+        List<ItemStack> list = new ArrayList<>();
+        if (configMap.isSet("chestitems.items")) {
+            System.out.println("asd");
+            for (String items : configMap.getConfigurationSection("chestitems.items").getKeys(false)) {//读取队伍信息
+                System.out.println("收到甲方可"+items+configMap.getConfigurationSection("chestitems.items").toString());
+                ConfigurationSection item = configMap.getConfigurationSection("chestitems.items").getConfigurationSection(items);
+                String type = item.getString("type");
+                System.out.println(type);
+                ItemStack itemStack = new ItemStack(Material.valueOf(type));
+                itemStack.getItemMeta().setDisplayName(item.getString("name"));
+                list.add(itemStack);
+            }
+        }
         return list;
     }
 
@@ -1952,5 +2019,9 @@ public class Game implements com.ibs.oldman.pushcar.api.game.Game {
                 return ipmChestItemSpawner;
         }
         return null;
+    }
+
+    public Expert getExpert() {
+        return expert;
     }
 }
